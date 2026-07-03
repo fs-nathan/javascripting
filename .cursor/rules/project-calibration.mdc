@@ -1,0 +1,62 @@
+---
+description: Governance for /calibrate — aligning Cursor config to the actual codebase
+globs: AGENTS.md,.cursor/**
+alwaysApply: false
+---
+
+# Project Calibration Governance
+
+Applies when running `/calibrate`, invoking **Master Agent**, or using the `project-calibration` skill.
+
+## Scope
+
+Calibration adjusts **Cursor configuration only**:
+
+- `AGENTS.md`
+- `.cursor/agents/**`
+- `.cursor/commands/**`
+- `.cursor/rules/project-stack.mdc` (generated)
+- `.cursor/calibration/**` (generated artifacts)
+
+## Never during calibration
+
+- Modify application source (`src/`, `app/`, `lib/`, `services/`, etc.)
+- Delete host-created `.cursor/**` files
+- Read or commit `.env`, secrets, or credentials
+- Copy secret **values** into `stack-profile.json` (evidence = paths and field names only)
+- Replace `tech-stack.mdc` (add `project-stack.mdc` only)
+- Overwrite `AGENTS.local.md` or `settings.local.json`
+
+## Required workflow
+
+1. **Discover** — write `.cursor/calibration/stack-profile.json` with evidence
+2. **Report** — write `.cursor/calibration/manifest.md` (dry-run default)
+3. **Apply** — write only after user confirms manifest or `--apply` flag
+
+## Preserve host customizations
+
+Files not shipped by `cursor-agents` or clearly host-authored must appear under **Skip** in the manifest. When in doubt, skip.
+
+## Name collisions
+
+See `.cursor/references/name-collision-playbook.md`.
+
+| Collision type | Manifest section | Apply behavior |
+|----------------|------------------|----------------|
+| Same **path** as package asset | **Skip (preserve host)** | Never overwrite |
+| Same frontmatter **`name:`**, different paths | **Conflict (manual resolution)** | Ask user; never auto-rename or delete |
+| Host-only custom file | **Skip** | Preserve |
+
+Never auto-resolve **Conflict** during Apply.
+
+## Generated artifacts (commit to git)
+
+| File | Purpose |
+|------|---------|
+| `.cursor/rules/project-stack.mdc` | Repo-specific stack (`alwaysApply: true`) |
+| `.cursor/calibration/stack-profile.json` | Machine-readable profile + evidence |
+| `.cursor/calibration/manifest.md` | Optional audit trail of last calibration |
+
+## Force mode
+
+`--force` may overwrite **only** previously generated calibration artifacts listed above and patches explicitly listed in the manifest. It must not delete custom rules.

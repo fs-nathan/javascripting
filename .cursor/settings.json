@@ -1,0 +1,6 @@
+{
+  "rules_dir": ".cursor/rules",
+  "commands_dir": ".cursor/commands",
+  "skills_dir": ".cursor/skills",
+  "agents_dir": ".cursor/agents"
+}

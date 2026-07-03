@@ -1,0 +1,106 @@
+{
+  "subtitle": "\u001b[23mChọn bài tập và nhấn \u001b[3mEnter\u001b[23m để bắt đầu",
+  "menu": {
+    "credits": "GHI CÔNG",
+    "exit": "THOÁT",
+    "help": "TRỢ GIÚP",
+    "completed": "ĐÃ HOÀN THÀNH",
+    "language": "CHỌN NGÔN NGỮ",
+    "cancel": "HỦY",
+    "update": "KIỂM TRA CẬP NHẬT"
+  },
+  "language": {
+    "_current": "ĐANG DÙNG",
+    "de": "German (Deutsch)",
+    "en": "English",
+    "fr": "French (français)",
+    "ja": "Japanese (日本語)",
+    "zh-cn": "Chinese (简体中文)",
+    "zh-tw": "Taiwanese (繁體中文)",
+    "es": "Spanish (Español)",
+    "pt-br": "Brazilian Portuguese (Português)",
+    "vi": "Vietnamese (Tiếng Việt)",
+    "ru": "Russian (Русский)",
+    "ko": "Korean (한국어)",
+    "pl": "Polish (Polski)",
+    "nb-no": "Norwegian (Norsk)",
+    "it": "Italian (Italiano)",
+    "uk": "Ukrainian (Українська)",
+    "sr": "Serbian (српски)",
+    "fi": "Finnish (suomi)",
+    "tr": "Turkish (Türkçe)"
+  },
+  "exercise": {
+    "INTRODUCTION": "Giới thiệu",
+    "VARIABLES": "Biến",
+    "STRINGS": "Chuỗi",
+    "STRING LENGTH": "Độ dài chuỗi",
+    "REVISING STRINGS": "Sửa đổi chuỗi",
+    "NUMBERS": "Số",
+    "ROUNDING NUMBERS": "Làm tròn số",
+    "NUMBER TO STRING": "Chuyển số sang chuỗi",
+    "IF STATEMENT": "Câu lệnh IF",
+    "FOR LOOP": "Vòng lặp FOR",
+    "ARRAYS": "Mảng (Array)",
+    "ARRAY FILTERING": "Lọc mảng (Array Filtering)",
+    "ACCESSING ARRAY VALUES": "Truy cập phần tử mảng",
+    "LOOPING THROUGH ARRAYS": "Duyệt mảng",
+    "OBJECTS": "Đối tượng (Object)",
+    "OBJECT PROPERTIES": "Thuộc tính đối tượng",
+    "OBJECT KEYS": "Khóa đối tượng (Object Keys)",
+    "FUNCTIONS": "Hàm (Function)",
+    "FUNCTION ARGUMENTS": "Tham số hàm",
+    "SCOPE": "Phạm vi (Scope)"
+  },
+  "error": {
+    "exercise": {
+      "none_active": "Chưa có bài tập nào được chọn. Hãy chọn một bài từ menu.",
+      "missing": "Không tìm thấy bài tập: {{{name}}}",
+      "unexpected_error": "Không thể {{mode}}: {{{err}}}",
+      "missing_file": "LỖI: {{{exerciseFile}}} không tồn tại!",
+      "not_a_workshopper": "LỖI: {{{exerciseFile}}} không phải bài tập workshopper.",
+      "method_not_required": "{{method}} không được yêu cầu cho bài tập này.",
+      "preparing": "Lỗi khi chuẩn bị bài tập: {{{err}}}",
+      "loading": "Lỗi khi tải nội dung bài tập: {{{err}}}"
+    },
+    "no_uncomplete_left": "Không còn bài tập chưa hoàn thành sau bài hiện tại",
+    "cleanup": "Lỗi khi dọn dẹp: {{{err}}}",
+    "notty": "Vui lòng chạy lệnh này trong terminal hỗ trợ TTY."
+  },
+  "solution": {
+    "fail": {
+      "title": "CHƯA ĐẠT",
+      "message": "Bài {{{currentExercise.name}}} của bạn chưa đạt. Thử lại nhé!\n"
+    },
+    "pass": {
+      "title": "ĐẠT",
+      "message": "Bài {{{currentExercise.name}}} của bạn đã đạt!"
+    },
+    "notes": {
+      "compare": "Đây là lời giải chính thức nếu bạn muốn đối chiếu:\n",
+      "load_error": "LỖI: Có lỗi khi in file lời giải: {{{err}}}"
+    }
+  },
+  "ui": {
+    "return": "Gõ '{{appName}}' để mở menu.\n",
+    "usage": "Cách dùng: {{appName}} {{mode}} ten-file.js"
+  },
+  "progress": {
+    "reset": "Đã đặt lại tiến độ {{title}}",
+    "finished": "Bạn đã hoàn thành tất cả bài tập! 🎉\n",
+    "state": "Bài {{count}} / {{amount}}",
+    "remaining": {
+      "one": "Bạn còn 1 bài tập nữa.",
+      "other": "Bạn còn {{count}} bài tập nữa."
+    }
+  },
+  "credits": {
+    "title": "{{appName}} được tạo bởi các contributor tuyệt vời sau:",
+    "name": "Tên",
+    "user": "Tên GitHub"
+  },
+  "update": {
+    "latest_version": "{{name}}**@{{version}}** đã là phiên bản mới nhất.\n\n**Chúc mừng!**",
+    "now": "{{name}}_@{{current}}_ đã lỗi thời, cập nhật lên **{{latest}}** bằng lệnh:\n\n```bash\n{{cmd}}\n```\n"
+  }
+}

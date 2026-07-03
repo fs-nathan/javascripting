@@ -1,0 +1,234 @@
+---
+name: project-calibration
+description: Discover the actual tech stack of a brownfield repo and calibrate AGENTS.md and .cursor config. Use for /calibrate, adapting cursor-agents to Django/Go/Vue/etc., or onboarding to an existing codebase.
+---
+
+# Project Calibration
+
+You are a principal engineer calibrating Cursor AI configuration to match **this repository's real stack** — not the generic `cursor-agents` template (Node/Express/Prisma/Next.js).
+
+**Reference:** `.cursor/references/stack-detection-signals.md`  
+**Name collisions:** `.cursor/references/name-collision-playbook.md`  
+**Governance:** `.cursor/rules/project-calibration.mdc`
+
+## Stack precedence
+
+When `.cursor/rules/project-stack.mdc` exists:
+
+1. **Follow `project-stack.mdc`** for technology choices in this repo
+2. Use `tech-stack.mdc` only as generic fallback reference
+3. Agent personas (`backend.md`, `frontend.md`) defer to `project-stack.mdc` when present
+
+Do **not** replace or delete `tech-stack.mdc`. Add or update `project-stack.mdc` only.
+
+---
+
+## Phase 1 — Discover
+
+Scan in this order. Record every inference with `evidence: string[]` (file paths or `file:field`).
+
+1. Package manifests (`package.json`, `pyproject.toml`, `go.mod`, …)
+2. Lockfiles
+3. Framework config (`next.config.*`, `prisma/schema.prisma`, `django/settings.py`, …)
+4. CI workflows (`.github/workflows/*`)
+5. Infra (`Dockerfile`, `docker-compose.yml`)
+6. Directory layout (`src/`, `apps/`, `internal/`, …)
+7. Existing `.cursor/` — note custom rules to **preserve**
+8. **Name collisions** — scan commands, skills, agents (see playbook below)
+
+**Do not read or copy content from:** `.env*`, `*.pem`, `credentials.json`, `secrets/`, or any file that likely contains API keys or passwords. Evidence uses **paths and field names only** — never secret values in `stack-profile.json`.
+
+Write **`.cursor/calibration/stack-profile.json`**:
+
+```json
+{
+  "generatedAt": "ISO-8601",
+  "projectRoot": ".",
+  "scope": ".",
+  "confidence": "high",
+  "languages": [{ "name": "typescript", "evidence": ["package.json:devDependencies.typescript"] }],
+  "frontend": { "framework": "nextjs", "version": "14", "evidence": [] },
+  "backend": { "framework": "express", "runtime": "node20", "evidence": [] },
+  "database": { "primary": "postgresql", "orm": "prisma", "evidence": [] },
+  "cache": { "primary": null, "evidence": [] },
+  "testing": { "unit": "vitest", "e2e": "playwright", "evidence": [] },
+  "monorepo": { "tool": null, "packages": [] },
+  "divergencesFromPackageDefaults": [
+    "ORM is Drizzle, not Prisma"
+  ],
+  "nameCollisions": [
+    {
+      "type": "path",
+      "path": ".cursor/commands/build.md",
+      "resolution": "skip-host-wins"
+    },
+    {
+      "type": "frontmatter-name",
+      "name": "tdd",
+      "paths": [".cursor/skills/my-tdd/SKILL.md", ".cursor/skills/tdd/SKILL.md"],
+      "resolution": "manual"
+    }
+  ]
+}
+```
+
+### Name collision scan (step 8)
+
+Follow `.cursor/references/name-collision-playbook.md`:
+
+1. **Path collision** — host file exists at the same path as a package-shipped asset → record `type: path`, resolution `skip-host-wins`
+2. **Frontmatter `name` collision** — two+ files share the same `name:` in YAML (e.g. two skills both `name: tdd`) → record `type: frontmatter-name`, resolution `manual`
+3. Parse frontmatter from: `.cursor/commands/*.md`, `.cursor/skills/**/SKILL.md`, `.cursor/agents/*.md`
+
+Do **not** auto-rename or delete host files. List all collisions in the manifest.
+
+Set `confidence` per reference guide: high | medium | low. If **low**, stop before Apply and ask the user.
+
+---
+
+## Phase 2 — Report
+
+Produce **`.cursor/calibration/manifest.md`** without writing calibration targets unless `--apply`.
+
+```markdown
+# Calibration Manifest — [project-name]
+
+**Profile:** `.cursor/calibration/stack-profile.json`  
+**Confidence:** high | medium | low  
+**Mode:** dry-run | apply
+
+## Add
+- `.cursor/rules/project-stack.mdc` — [one-line reason]
+
+## Patch
+- `AGENTS.md` — add Project Context section
+- `.cursor/agents/backend.md` — add defer-to-project-stack note (if backend detected)
+
+## Skip (preserve host)
+- `.cursor/rules/custom-auth.mdc` — host-owned
+- `.cursor/commands/build.md` — same path as package; install skipped overwrite
+
+## Conflict (manual resolution)
+- `name: calibrate` — host `.cursor/commands/calibrate.md` vs package default; user must pick one or rename host `name:`
+
+## No change
+- `security.mdc` — stack-agnostic
+```
+
+**Conflict** items are never auto-fixed on Apply — ask the user first.
+
+List every file with rationale. Include before/after summary for patches.
+
+---
+
+## Phase 3 — Apply
+
+Run only after user approves manifest or `--apply` is set.
+
+### 3.1 Write `project-stack.mdc`
+
+Create or update `.cursor/rules/project-stack.mdc` using this template (English only):
+
+```markdown
+---
+description: Detected tech stack and conventions for this repository
+alwaysApply: true
+---
+
+# Project Stack — [project-name]
+
+> Generated by `/calibrate` on [YYYY-MM-DD]. Evidence: `.cursor/calibration/stack-profile.json`  
+> **Precedence:** This rule overrides generic `tech-stack.mdc` for this repository.
+
+## Stack summary
+
+[One paragraph describing the actual stack.]
+
+## Approved for this repo
+
+| Layer | Choice | Evidence |
+|-------|--------|----------|
+| Language | TypeScript 5 | package.json |
+| Frontend | Next.js 14 | package.json, next.config.ts |
+| Backend | Express | package.json |
+| Database | PostgreSQL + Prisma | prisma/schema.prisma |
+| Testing | Vitest + Playwright | package.json |
+
+## Patterns to follow
+
+- [Bullets from detected conventions, folder layout, CI commands]
+
+## Patterns to avoid
+
+- Do not assume Prisma if this repo uses [actual ORM]
+- Do not assume Express if this repo uses [actual framework]
+
+## Agent notes
+
+- **Backend agent:** Use [framework/ORM] patterns from this file
+- **Frontend agent:** Use [framework] patterns from this file
+- **Irrelevant agents:** [e.g. skip Frontend if no UI detected]
+```
+
+### 3.2 Patch `AGENTS.md`
+
+Add or update a **Project Context** section:
+
+```markdown
+## Project Context
+
+This repository was calibrated on [date]. See `.cursor/rules/project-stack.mdc` for the detected stack.
+
+**Profile:** `.cursor/calibration/stack-profile.json`
+```
+
+### 3.3 Patch agent personas (targeted)
+
+**Idempotency:** If a file already contains a brownfield defer note (e.g. `project-stack.mdc` or `**Brownfield:**`), list it under **No change** in the manifest — do not duplicate blocks.
+
+| Condition | Action |
+|-----------|--------|
+| Backend stack ≠ Node/Express default | Add defer note at top of Tech Stack in `backend.md` only if missing |
+| Frontend ≠ React/Next default | Same for `frontend.md` only if missing |
+| No frontend detected | Note in `project-stack.mdc` Agent notes; manifest lists frontend agent as rarely used |
+| Test runner ≠ Vitest | Note in manifest; optional one-line in `testing.mdc` pointer (do not rewrite entire rule) |
+
+### 3.4 `--force` behavior
+
+Overwrite only:
+
+- `.cursor/rules/project-stack.mdc`
+- `.cursor/calibration/stack-profile.json`
+- `.cursor/calibration/manifest.md`
+- Files explicitly listed under **Patch** in the manifest
+
+Never delete host custom `.cursor/` files.
+
+---
+
+## Safety checklist
+
+Before Apply:
+
+- [ ] Every stack claim has evidence paths (paths/keys only — no secret values)
+- [ ] Manifest reviewed (dry-run shown to user)
+- [ ] No application source paths in write set
+- [ ] Custom host rules under **Skip**
+- [ ] Name collisions listed under **Skip** or **Conflict** (none silently overwritten)
+- [ ] **Conflict** items confirmed with user before Apply
+- [ ] Agent persona patches skipped when defer note already present
+- [ ] English only in generated files
+- [ ] User told to commit `project-stack.mdc` + `stack-profile.json`
+
+---
+
+## Calibration matrix (quick reference)
+
+| Detected | Update |
+|----------|--------|
+| Any brownfield | `project-stack.mdc`, `stack-profile.json`, `AGENTS.md` Project Context |
+| Python/Django | Backend defer note; database patterns in project-stack |
+| Go | Backend defer note; project-structure hints in project-stack |
+| Vue/Nuxt | Frontend defer note |
+| Monorepo | `scope` in profile; per-package notes in project-stack |
+| No divergence from defaults | Still generate `project-stack.mdc` documenting alignment |
