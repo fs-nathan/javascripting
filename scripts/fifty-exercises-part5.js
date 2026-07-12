@@ -310,7 +310,7 @@ module.exports = {
           })
         }
         resolve({ pass: failures.length === 0, failures })
-      }, 100)
+      }, 200)
     })
   }
 }
