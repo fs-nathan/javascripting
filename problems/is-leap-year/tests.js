@@ -1,0 +1,11 @@
+'use strict'
+
+module.exports = {
+  functionName: 'isLeapYear',
+  cases: [
+    { input: [2024], expected: true },
+    { input: [1900], expected: false },
+    { input: [2000], expected: true },
+    { input: [2023], expected: false }
+  ]
+}

@@ -25,6 +25,13 @@
     "url": "https://github.com/workshopper/javascripting"
   },
   "scripts": {
-    "test": "standard && workshopper-adventure-test"
+    "test": "standard && node tests/unit/run-function-tests.test.js && node scripts/verify-fifty-solutions.js && workshopper-adventure-test",
+    "generate:fifty": "node scripts/generate-fifty-exercises.js",
+    "verify:fifty": "node scripts/verify-fifty-solutions.js"
+  },
+  "standard": {
+    "ignore": [
+      "scripts/fifty-exercises-part*.js"
+    ]
   }
 }

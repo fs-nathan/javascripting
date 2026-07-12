@@ -1,414 +1,305 @@
-# Plan: Việt hóa Javascripting
+# Plan: 50 bài tập JavaScript + progress tracking
 
-> Spec: [`docs/specs/vietnamese-localization.md`](../docs/specs/vietnamese-localization.md)  
-> Quyết định đã xác nhận: `defaultLang: 'vi'`, thuật ngữ Việt (English) lần đầu, có `README.vi.md`
+> Spec: [`docs/specs/fifty-js-exercises.md`](../docs/specs/fifty-js-exercises.md)  
+> Nguồn: `JavaScript_50_Bai_Tap_Thuan_Tu_De_Den_Kho.xlsx`  
+> Quyết định: append menu · verify hàm · chỉ VI · full solution · đủ 50 bài
 
 ## Tổng quan
 
 | Metric | Giá trị |
-|---|---|
-| Bài tập active | 20 (theo `menu.json`) |
-| File mới | 44 (43 i18n + 1 README) |
-| File sửa code | 1 (`index.js`) |
-| Language code | `vi` |
-| Verify tự động | `npm test` (không đổi logic JS) |
+|--------|---------|
+| Bài cũ giữ nguyên | 20 (stdout compare) |
+| Bài mới | 50 (function tests) |
+| Menu tổng | 70 |
+| File code mới (ước lượng) | `lib/function-problem.js`, `lib/run-function-tests.js`, helpers test |
+| File nội dung mới | ~50 × (`problem_vi.md` + `solution_vi.md` + `tests.js`) + 50 × `solutions/*/index.js` |
+| File sửa | `menu.json`, `index.js`, `i18n/vi.json` |
+
+## Phân tích codebase (điểm neo)
+
+| Thành phần | Vai trò hiện tại | Thay đổi |
+|------------|------------------|----------|
+| `menu.json` | Danh sách tên bài | Append 50 keys |
+| `index.js` | `addAll` → luôn `problem(dir)` | Branch: có `tests.js` → `functionProblem` |
+| `lib/problem.js` | Load md + compare stdout | Không đổi |
+| `lib/compare-solution.js` + `run-solution.js` | So stdout | Không dùng cho 50 bài mới |
+| `i18n/vi.json` `exercise.*` | Label menu | +50 keys |
+| Storage workshopper | Checkmark tiến độ | Tái sử dụng — không thêm persistence |
 
 ## Dependency graph
 
 ```
-Task 1.1 (index.js defaultLang)
-    ↓
-Task 1.2 (vi.json scaffold: exercise keys)
-    ↓
-Task 1.3 (vi.json UI strings) ──┐
-Task 1.4 (footer + troubleshooting) ──┤
-    ↓                                   │
-Checkpoint A: Menu tiếng Việt hoạt động
-    ↓
-Slice 2–5 (problem_vi + solution_vi theo nhóm bài)
-    ↓
-Task 6.1 (README.vi.md)
-    ↓
-Task 6.2 (Smoke test + npm test)
-    ↓
-Checkpoint B: Hoàn thành
+1.1 run-function-tests (harness)
+  └─► 1.2 function-problem factory
+        └─► 1.3 index.js auto-detect + wire
+              └─► 1.4 Scaffold BT01 end-to-end (risk-first vertical slice)
+                    └─► Checkpoint A
+                          ├─► 2.x Batch bài thuần (01–40 trừ HOF)
+                          └─► 3.x HOF harness + bài 41,46,47,50 (+ deep*)
+                                └─► Checkpoint B
+                                      └─► 4.x Menu/i18n đủ 50 + regression + docs
+                                            └─► Checkpoint C
 ```
 
-## Quy ước dịch (áp dụng mọi task)
+## Quy ước scaffold mỗi bài
 
-- **Giữ nguyên:** code blocks, tên biến, tên file, lệnh `javascripting verify`, API (`console.log`, `.filter()`, …)
-- **Dịch:** đoạn giải thích, heading hướng dẫn, thông báo pass/fail
-- **Thuật ngữ:** Việt kèm English lần đầu — ví dụ "Phạm vi (Scope)", "Mảng (Array)"
-- **Tham chiếu:** `i18n/pt-br.json`, `problems/*/problem_pt-br.md`, `problems/*/problem_zh-cn.md`
+```
+problems/<slug>/
+  problem_vi.md      # đề tiếng Việt từ Excel
+  solution_vi.md     # thông báo / ghi chú khi xem solution
+  tests.js           # { functionName, cases } hoặc custom runner
+
+solutions/<slug>/
+  index.js           # module.exports = fn  (full lời giải)
+```
+
+**Export học viên:** `module.exports = <functionName>`  
+**menu key:** UPPERCASE words khớp kebab folder  
+**vi label:** `NN. <Tên bài Excel>`
 
 ---
 
-## Phase 1: Foundation — Locale scaffold
+## Phase 1: Foundation — Function verify harness
 
-Mục tiêu phase: Chạy `javascripting` local → menu + UI tiếng Việt ngay lần đầu, dù chưa dịch hết nội dung bài.
+Mục tiêu: một bài mới verify được bằng test cases và hiện trên menu với checkmark.
 
-### Task 1.1: Set ngôn ngữ mặc định `vi`
+### Task 1.1: `lib/run-function-tests.js`
 
-**Objective:** Lần chạy đầu hiển thị tiếng Việt mà không cần chọn CHOOSE LANGUAGE.
+**Objective**: Chạy test cases chống lại hàm đã export; trả về pass hoặc chi tiết fail.
 
-**Files to modify:**
+**Files to modify / create**:
+- `lib/run-function-tests.js` (new)
+- `tests/unit/run-function-tests.test.js` (new — nếu runner test hiện tại cho phép; nếu không, script node tự kiểm)
+
+**Acceptance Criteria**:
+- [ ] Load file qua `require`; lỗi rõ nếu không export function
+- [ ] Hỗ trợ `cases: [{ input: args[], expected }]`
+- [ ] Deep equal cho object/array
+- [ ] Trả về danh sách case fail (index, input, expected, actual)
+
+**Dependencies**: None
+
+**Verification**:
+- [ ] Unit/smoke: pass khi expected khớp; fail khi lệch
+- [ ] Không dùng `eval`
+
+---
+
+### Task 1.2: `lib/function-problem.js`
+
+**Objective**: Factory bài tập tương thích workshopper (init / verify / solution paths) dùng harness.
+
+**Files**:
+- `lib/function-problem.js` (new)
+
+**Acceptance Criteria**:
+- [ ] `init` load `problem_vi.md` / `solution_vi.md` theo lang (ưu tiên `_vi`, fallback nếu cần)
+- [ ] `verify(args, cb)` require attempt → chạy `tests.js` → `cb(null, true|false)`
+- [ ] Fail message tiếng Việt kèm case lỗi
+- [ ] `solutionPath` trỏ `solutions/<slug>/index.js`
+
+**Dependencies**: 1.1
+
+**Verification**:
+- [ ] Gọi factory với dir giả lập / BT01 sau Task 1.4
+
+---
+
+### Task 1.3: Wire `index.js` auto-detect
+
+**Objective**: Bài có `tests.js` dùng function-problem; bài cũ giữ stdout.
+
+**Files**:
 - `index.js`
 
-**Changes:**
-```js
-const jsing = require('workshopper-adventure')({
-  appDir: __dirname,
-  languages,
-  defaultLang: 'vi',
-  header: require('workshopper-adventure/default/header'),
-  footer: require('./lib/footer.js')
-})
-```
+**Acceptance Criteria**:
+- [ ] `fs.existsSync(path.join(dir, 'tests.js'))` → `functionProblem(dir)` else `problem(dir)`
+- [ ] 20 bài cũ không đổi hành vi
 
-**Acceptance Criteria:**
-- [ ] `defaultLang: 'vi'` được truyền vào workshopper options
-- [ ] `vi` nằm trong mảng `languages` (sau khi Task 1.2 hoàn thành)
-- [ ] User vẫn chuyển được sang English qua CHOOSE LANGUAGE
+**Dependencies**: 1.2
 
-**Dependencies:** Không
-
-**Verification:**
-- [ ] `node -e "require('./index')"` không throw
-- [ ] Manual: xóa storage (`~/.config/workshopper/lang`, `~/.config/javascripting/lang`) → `javascripting` → UI tiếng Việt
+**Verification**:
+- [ ] `npm test` (workshopper-adventure-test) vẫn pass cho bài cũ
 
 ---
 
-### Task 1.2: Tạo `i18n/vi.json` — tên bài trên menu
+### Task 1.4: Vertical slice BT01 — Chuyển đổi nhiệt độ
 
-**Objective:** 20 mục menu hiển thị tiếng Việt.
+**Objective**: End-to-end một bài mới trên menu + verify + progress.
 
-**Files to create:**
-- `i18n/vi.json`
+**Files**:
+- `menu.json` (append `CELSIUS TO FAHRENHEIT`)
+- `i18n/vi.json` (`01. Chuyển đổi nhiệt độ`)
+- `problems/celsius-to-fahrenheit/{problem_vi.md,solution_vi.md,tests.js}`
+- `solutions/celsius-to-fahrenheit/index.js`
 
-**Content:** Block `exercise` với 20 key khớp `menu.json`:
+**Acceptance Criteria**:
+- [ ] Hiện trên menu sau SCOPE
+- [ ] Solution chính thức pass `tests.js`
+- [ ] Attempt sai fail; attempt đúng → checkmark
+- [ ] Expected type khớp đề (`.toFixed(1)` → string nếu đề yêu cầu)
 
-| Key | Label |
-|---|---|
-| INTRODUCTION | Giới thiệu |
-| VARIABLES | Biến |
-| STRINGS | Chuỗi |
-| STRING LENGTH | Độ dài chuỗi |
-| REVISING STRINGS | Sửa đổi chuỗi |
-| NUMBERS | Số |
-| ROUNDING NUMBERS | Làm tròn số |
-| NUMBER TO STRING | Chuyển số sang chuỗi |
-| IF STATEMENT | Câu lệnh IF |
-| FOR LOOP | Vòng lặp FOR |
-| ARRAYS | Mảng (Array) |
-| ARRAY FILTERING | Lọc mảng (Array Filtering) |
-| ACCESSING ARRAY VALUES | Truy cập phần tử mảng |
-| LOOPING THROUGH ARRAYS | Duyệt mảng |
-| OBJECTS | Đối tượng (Object) |
-| OBJECT PROPERTIES | Thuộc tính đối tượng |
-| OBJECT KEYS | Khóa đối tượng (Object Keys) |
-| FUNCTIONS | Hàm (Function) |
-| FUNCTION ARGUMENTS | Tham số hàm |
-| SCOPE | Phạm vi (Scope) |
+**Dependencies**: 1.3
 
-**Acceptance Criteria:**
-- [ ] JSON valid, format giống `i18n/pt-br.json`
-- [ ] 100% key trong `menu.json` có bản dịch
-- [ ] `index.js` auto-detect `vi` trong `languages`
-
-**Dependencies:** Không
-
-**Verification:**
-- [ ] Manual: menu hiện tên bài tiếng Việt
+**Verification**:
+- [ ] Manual: `javascripting` → chọn bài → `verify` pass/fail
+- [ ] Official solution tự pass harness
 
 ---
 
-### Task 1.3: Bổ sung UI strings vào `i18n/vi.json`
+## Checkpoint A: Harness + BT01 sống
 
-**Objective:** Subtitle, menu hệ thống, PASS/FAIL, progress — toàn bộ UI workshop tiếng Việt.
-
-**Files to modify:**
-- `i18n/vi.json`
-
-**Keys cần dịch** (tham chiếu `node_modules/workshopper-adventure/i18n/en.json`):
-
-| Key | Bản dịch đề xuất |
-|---|---|
-| `subtitle` | Chọn bài tập và nhấn Enter để bắt đầu |
-| `menu.credits` | GHI CÔNG |
-| `menu.exit` | THOÁT |
-| `menu.help` | TRỢ GIÚP |
-| `menu.completed` | ĐÃ HOÀN THÀNH |
-| `menu.language` | CHỌN NGÔN NGỮ |
-| `menu.cancel` | HỦY |
-| `menu.update` | KIỂM TRA CẬP NHẬT |
-| `solution.pass.title` | ĐẠT |
-| `solution.fail.title` | CHƯA ĐẠT |
-| `solution.pass.message` | Bài {{{currentExercise.name}}} của bạn đã pass! |
-| `solution.fail.message` | Bài {{{currentExercise.name}}} chưa pass. Thử lại nhé!\n |
-| `progress.state` | Bài {{count}} / {{amount}} |
-| `progress.finished` | Bạn đã hoàn thành tất cả bài tập! 🎉\n |
-| `ui.return` | Gõ '{{appName}}' để mở menu.\n |
-| `ui.usage` | Cách dùng: {{appName}} {{mode}} ten-file.js |
-| `error.*` | Dịch đầy đủ các message lỗi |
-
-**Acceptance Criteria:**
-- [ ] Giữ nguyên placeholder `{{{...}}}`, `{{...}}`
-- [ ] Giữ ANSI escape trong `subtitle` nếu có
-- [ ] Không sửa `node_modules`
-
-**Dependencies:** Task 1.2
-
-**Verification:**
-- [ ] Manual: subtitle, PASS/FAIL, progress hiển thị tiếng Việt
+**Verify before proceeding**:
+- [ ] `npm test` không regress bài cũ
+- [ ] BT01 pass/fail/progress đúng
+- [ ] Quy ước folder/export đã chốt (không đổi giữa chừng)
 
 ---
 
-### Task 1.4: Footer và troubleshooting tiếng Việt
+## Phase 2: Batch bài thuần (test cases đơn giản)
 
-**Objective:** Footer help link và màn hình diff khi verify fail đều tiếng Việt.
+Mỗi task = một nhóm vertical: menu keys + vi labels + problems + solutions + tests — học viên làm được và track progress.
 
-**Files to create:**
-- `i18n/footer/vi.md`
-- `i18n/troubleshooting_vi.md`
+### Task 2.1: Bài 02–10 (điều kiện, vòng lặp, mảng/chuỗi cơ bản)
 
-**Acceptance Criteria:**
-- [ ] `footer/vi.md` dịch từ `footer/en.md`
-- [ ] `troubleshooting_vi.md` giữ placeholder `%solution%`, `%attempt%`, `%diff%`, `%filename%`
-- [ ] Cấu trúc markdown giống bản gốc
+**Bài**: isLeapYear, sumOfOdds, classifyGrade, findMin, countSpaces, calculateAverage, multiplicationTable, checkExtension, factorial
 
-**Dependencies:** Không (song song với 1.2–1.3)
+**Files**: `menu.json`, `i18n/vi.json`, `problems/*`, `solutions/*` (9 bài)
 
-**Verification:**
-- [ ] Manual: submit sai solution → troubleshooting tiếng Việt + diff
+**Acceptance Criteria**:
+- [ ] 9 bài trên menu; mỗi official solution pass tests
+- [ ] Ít nhất 1 case biên / case Excel sample mỗi bài
+
+**Dependencies**: Checkpoint A
 
 ---
 
-### Checkpoint A: Foundation Complete
+### Task 2.2: Bài 11–20
 
-**Verify trước khi dịch nội dung bài:**
+**Bài**: capitalizeWords → findIntersection (10 bài)
 
-- [ ] `javascripting` khởi động, UI mặc định tiếng Việt
-- [ ] Menu 20 bài hiển thị tên tiếng Việt
-- [ ] CHOOSE LANGUAGE vẫn hoạt động (en ↔ vi)
-- [ ] Footer tiếng Việt xuất hiện dưới mô tả bài
-- [ ] Bài chưa dịch fallback: nếu thiếu `problem_vi.md` → lỗi load (expected cho đến Slice 2+)
+**Dependencies**: 2.1
 
 ---
 
-## Phase 2: Vertical Slice — Bài cơ bản (1–6)
+### Task 2.3: Bài 21–30
 
-Mục tiêu: Người học hoàn thành 6 bài đầu hoàn toàn bằng tiếng Việt.
+**Bài**: findGCD → customFilter (10 bài)
 
-### Task 2.1: Giới thiệu (Introduction)
-
-**Files to create:**
-- `problems/introduction/problem_vi.md` (~43 dòng en)
-- `problems/introduction/solution_vi.md`
-
-**Source:** `problem.md`, `solution.md`
-
-**Acceptance Criteria:**
-- [ ] Hướng dẫn tạo folder, file, `console.log('hello')`
-- [ ] Lệnh Windows `type NUL` được dịch/ghi chú
-- [ ] Solution message khích lệ chuyển bài tiếp
-
-**Dependencies:** Checkpoint A
-
-**Verification:**
-- [ ] `javascripting verify introduction.js` → PASS + message tiếng Việt
+**Dependencies**: 2.2
 
 ---
 
-### Task 2.2: Biến (Variables)
+### Task 2.4: Bài 31–40 (trừ HOF)
 
-**Files:** `problems/variables/problem_vi.md`, `solution_vi.md`
+**Bài**: twoSum → bubbleSort (10 bài; chưa gồm memoize)
 
-**Thuật ngữ lần đầu:** Biến (Variable), khai báo (declare), gán (define)
+**Dependencies**: 2.3
 
-**Verification:** `javascripting verify variables.js` → PASS
-
----
-
-### Task 2.3: Chuỗi (Strings)
-
-**Files:** `problems/strings/problem_vi.md`, `solution_vi.md`
-
-**Verification:** `javascripting verify strings.js` → PASS
+**Verification (Phase 2)**:
+- [ ] Script/`node` chạy tất cả `solutions/*/index.js` qua harness → 40/40 (01–40) pass
+- [ ] Spot-check 3 bài manual verify
 
 ---
 
-### Task 2.4: Độ dài chuỗi (String Length)
+## Checkpoint B: 40 bài thuần hoàn tất
 
-**Files:** `problems/string-length/problem_vi.md`, `solution_vi.md`
-
-**Verification:** `javascripting verify string-length.js` → PASS
-
----
-
-### Task 2.5: Sửa đổi chuỗi (Revising Strings)
-
-**Files:** `problems/revising-strings/problem_vi.md`, `solution_vi.md`
-
-**Verification:** `javascripting verify revising-strings.js` → PASS
+**Verify before proceeding**:
+- [ ] 40 bài mới (01–40) trên menu + checkmark hoạt động
+- [ ] Không regress 20 bài cũ
 
 ---
 
-### Task 2.6: Số (Numbers)
+## Phase 3: HOF & so sánh sâu (risk)
 
-**Files:** `problems/numbers/problem_vi.md`, `solution_vi.md`
+### Task 3.1: Mở rộng harness cho HOF / async timing
 
-**Verification:** `javascripting verify numbers.js` → PASS
+**Objective**: Hỗ trợ memoize, debounce, throttle, curry (và deepEqual/deepClone nếu cần custom).
 
----
+**Files**:
+- `lib/run-function-tests.js` (extend)
+- Optional: `lib/hof-test-helpers.js`
 
-### Checkpoint B: Slice 2 Complete
+**Acceptance Criteria**:
+- [ ] `tests.js` có thể export `run(fn)` custom thay vì chỉ `cases`
+- [ ] Debounce/throttle: fake timers (tự viết hoặc hỏi trước nếu thêm dep)
+- [ ] Memoize: đếm số lần gọi hàm gốc
+- [ ] Curry: gọi từng phần `(1)(2)(3)`
 
-- [ ] 6 bài (1–6) có đủ problem_vi + solution_vi
-- [ ] Verify pass cho cả 5 bài
-- [ ] Code blocks trong bản dịch khớp bản en
+**Dependencies**: Checkpoint B (có thể song song sau A nếu muốn risk-first sớm — mặc định sau B)
 
----
-
-## Phase 3: Vertical Slice — Kiểu dữ liệu & điều kiện (7–10)
-
-### Task 3.1: Làm tròn số (Rounding Numbers)
-### Task 3.2: Chuyển số sang chuỗi (Number to String)
-### Task 3.3: Câu lệnh IF (If Statement)
-### Task 3.4: Vòng lặp FOR (For Loop)
-
-Mỗi task: `problem_vi.md` + `solution_vi.md` trong thư mục tương ứng.
-
-**Thuật ngữ:** Làm tròn (Rounding), ép kiểu (Type coercion), điều kiện (Conditional), vòng lặp (Loop)
-
-**Dependencies:** Checkpoint B
-
-**Verification:** verify pass từng bài
+**Ask First** nếu cần package `sinon` / `@sinonjs/fake-timers`.
 
 ---
 
-### Checkpoint C: Slice 3 Complete
+### Task 3.2: Bài 41–50
 
-- [ ] Bài 7–10 dịch xong (10/20 total)
+**Bài**: memoize, rotateArray, lengthOfLongestSubstring, deepEqual, quickSort, debounce, throttle, deepClone, romanToInt, curry
+
+**Acceptance Criteria**:
+- [ ] 10 bài đủ nội dung VI + solution + tests
+- [ ] Official solutions pass harness (kể cả HOF)
+
+**Dependencies**: 3.1
+
+---
+
+## Checkpoint C: Đủ 50 bài
+
+**Verify before proceeding**:
+- [ ] Menu 70 mục; 50 bài mới verify được
+- [ ] Progress đếm đúng khi hoàn thành mẫu
+- [ ] `npm test` + harness bulk pass
+
+---
+
+## Phase 4: Polish & QA
+
+### Task 4.1: Đồng bộ menu / i18n / slug audit
+
+**Objective**: Không thiếu key, không lệch slug, số thứ tự 01–50 đúng.
+
+**Files**: `menu.json`, `i18n/vi.json`, checklist script tùy chọn `scripts/audit-fifty-exercises.js`
+
+**Acceptance Criteria**:
+- [ ] 20 + 50 keys khớp folder tồn tại
+- [ ] Mọi `exercise.*` có trong `vi.json`
+
+**Dependencies**: 3.2
+
+---
+
+### Task 4.2: Regression + README ghi chú
+
+**Objective**: Tài liệu ngắn cho học viên về kiểu bài hàm mới.
+
+**Files**:
+- `README.vi.md` (mục mới: 50 bài luyện hàm)
+- Không bắt buộc đổi README EN nếu out of scope i18n
+
+**Acceptance Criteria**:
 - [ ] `npm test` pass
+- [ ] Bulk harness 50/50
+- [ ] README.vi mô tả `module.exports = fn` và `javascripting verify`
+
+**Dependencies**: 4.1
 
 ---
 
-## Phase 4: Vertical Slice — Mảng (11–15)
+## Checkpoint D: Release ready
 
-### Task 4.1: Mảng (Arrays)
-### Task 4.2: Lọc mảng (Array Filtering)
-### Task 4.3: Truy cập phần tử mảng (Accessing Array Values)
-### Task 4.4: Duyệt mảng (Looping Through Arrays)
-### Task 4.5: Đối tượng (Objects)
-
-**Lưu ý:** Bài Array Filtering và Looping Through Arrays dài (~56 dòng) — cần giữ cấu trúc code example.
-
-**Dependencies:** Checkpoint C
+- [ ] Spec core features 1–4 đạt
+- [ ] 50 bài + progress + không phá bài cũ
 
 ---
 
-### Checkpoint D: Slice 4 Complete
+## Thứ tự ưu tiên (tóm tắt)
 
-- [ ] Bài 11–15 dịch xong (15/20 total)
+1. Foundation harness + BT01 (giảm rủi ro format sớm)
+2. Batch 02–40 theo nhóm 10
+3. HOF harness + 41–50
+4. Audit + docs + regression
 
----
+## Next step
 
-## Phase 5: Vertical Slice — OOP & Functions (16–20)
-
-### Task 5.1: Thuộc tính đối tượng (Object Properties)
-### Task 5.2: Khóa đối tượng (Object Keys)
-### Task 5.3: Hàm (Functions)
-### Task 5.4: Tham số hàm (Function Arguments)
-### Task 5.5: Phạm vi (Scope) ⚠️ phức tạp nhất (~83 dòng)
-
-**Risk-first note:** Scope có nested functions, IIFE — dịch comment trong code example cẩn thận, không đổi code logic.
-
-**Dependencies:** Checkpoint D
-
----
-
-### Checkpoint E: All Challenges Translated
-
-- [ ] 20/20 bài có problem_vi + solution_vi
-- [ ] Verify pass cho tất cả 20 bài
-
----
-
-## Phase 6: Documentation & Final QA
-
-### Task 6.1: Tạo `README.vi.md`
-
-**Objective:** Hướng dẫn cài đặt và chạy workshop tiếng Việt.
-
-**Files to create:**
-- `README.vi.md`
-
-**Nội dung tối thiểu:**
-- Mô tả workshop (học JS qua terminal)
-- Yêu cầu Node.js
-- Cài từ source local:
-  ```bash
-  git clone ...
-  cd javascripting
-  npm install
-  npm link
-  javascripting
-  ```
-- Cách dùng menu (↑↓, Enter)
-- Cách verify: `javascripting verify ten-file.js`
-- Link hình ảnh `screenshot.png`, `javascripting.gif` (giữ nguyên)
-- Ghi chú ngôn ngữ mặc định tiếng Việt, cách chuyển English
-- Phần trợ giúp / license
-
-**Optional:** Thêm link `README.vi.md` vào đầu `README.md` gốc (1 dòng)
-
-**Dependencies:** Checkpoint E
-
----
-
-### Task 6.2: Smoke test toàn bộ + CI
-
-**Objective:** Xác nhận không regress.
-
-**Steps:**
-1. `npm test` — standard lint + workshopper-adventure-test
-2. Manual matrix 20 bài: mở bài → đọc tiếng Việt → verify solution → PASS message tiếng Việt
-3. Test chuyển ngôn ngữ en → vi → en
-4. Test verify fail → troubleshooting tiếng Việt
-
-**Acceptance Criteria:**
-- [ ] `npm test` exit 0
-- [ ] 20/20 verify pass
-- [ ] Không file `solutions/*.js` bị sửa
-
-**Dependencies:** Task 6.1
-
----
-
-### Checkpoint F: Release Ready
-
-- [ ] 44 file mới + 1 file sửa (`index.js`)
-- [ ] `README.vi.md` hoàn chỉnh
-- [ ] Spec checklist 100%
-
----
-
-## Risk register
-
-| Risk | Mitigation |
-|---|---|
-| User đã có storage lang=en cũ | Document trong README.vi: CHOOSE LANGUAGE → vi, hoặc xóa `~/.config/javascripting/` |
-| Thiếu `problem_vi.md` → crash load | Hoàn thành từng slice trước khi demo |
-| Dịch nhầm code trong fence | Review: so sánh code blocks en vs vi bằng diff |
-| Scope quá dài, dễ lỗi | Task 5.5 riêng, review kỹ comment trong example |
-
-## Thứ tự ưu tiên khi /build
-
-1. Phase 1 (1.2 → 1.3 → 1.4 → 1.1) — có thể 1.1 cùng lúc 1.2
-2. Phase 2 (2.1 → 2.6) — deliver value sớm
-3. Phase 3 → 4 → 5 — tuần tự
-4. Phase 6 — cuối cùng
-
-## Next Step
-
-Chạy `/build` theo `tasks/todo.md`, bắt đầu Phase 1.
+Sau khi plan được approve → `/build` bắt đầu Task 1.1 (TDD).

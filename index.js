@@ -3,6 +3,7 @@ const fs = require('fs')
 const os = require('os')
 const storage = require('workshopper-adventure-storage')
 const problem = require('./lib/problem')
+const functionProblem = require('./lib/function-problem')
 
 const i18nDir = path.join(__dirname, 'i18n')
 const languages = ['en'].concat(fs.readdirSync(i18nDir)
@@ -63,6 +64,10 @@ jsing.addAll(require('./menu.json').map(function (name) {
     fn: function () {
       const p = name.toLowerCase().replace(/\s/g, '-')
       const dir = require('path').join(__dirname, 'problems', p)
+      const testsPath = path.join(dir, 'tests.js')
+      if (fs.existsSync(testsPath)) {
+        return functionProblem(dir)
+      }
       return problem(dir)
     }
   }

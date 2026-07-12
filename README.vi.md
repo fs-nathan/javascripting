@@ -74,6 +74,32 @@ touch introduction.js
 javascripting verify introduction.js
 ```
 
+## 50 bài luyện hàm (dễ → khó)
+
+Sau 20 bài cổ điển, menu có thêm **50 bài** viết hàm (từ Excel luyện tập).
+
+Với các bài này:
+
+1. Định nghĩa đúng tên hàm theo đề
+2. Export bằng `module.exports = tenHam`
+3. Chạy `javascripting verify ten-file.js`
+
+Ví dụ:
+
+```js
+function celsiusToFahrenheit (celsius) {
+  return (celsius * 1.8 + 32).toFixed(1)
+}
+
+module.exports = celsiusToFahrenheit
+```
+
+```bash
+javascripting verify celsius-to-fahrenheit.js
+```
+
+Khi đạt, bài được đánh dấu **ĐÃ HOÀN THÀNH** trên menu (tiến độ lưu local).
+
 ## Trợ giúp
 
 Gặp vấn đề? Xem [nodeschool discussions](https://github.com/nodeschool/discussions) hoặc [issues](https://github.com/workshopper/javascripting/issues).
