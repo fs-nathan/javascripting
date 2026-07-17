@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JavaScript DOM Exercises — Interactive Practice</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-2: #273549;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --border: #334155;
+      --code-bg: #0b1120;
+      --danger: #f87171;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header.site {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header.site h1 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    header.site .sub {
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 400;
+    }
+
+    .translate-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+    }
+
+    .intro {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .intro a { color: var(--accent); }
+
+    .exercise {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 22px;
+      margin-bottom: 22px;
+      scroll-margin-top: 90px;
+    }
+
+    .exercise h2 {
+      margin: 0 0 6px;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .exercise h2 .num {
+      color: var(--bg);
+      background: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+
+    .prompt { color: var(--muted); margin: 0 0 14px; }
+
+    .demo {
+      background: #ffffff;
+      color: #1e293b;
+      border-radius: 10px;
+      padding: 16px;
+      margin: 12px 0;
+      border: 1px solid #cbd5e1;
+    }
+
+    .demo :is(button, input[type="button"], input[type="submit"]) {
+      cursor: pointer;
+    }
+
+    .demo .output {
+      margin-top: 10px;
+      padding: 8px 10px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      min-height: 1.2em;
+      white-space: pre-wrap;
+      color: #0f172a;
+    }
+
+    .demo table {
+      border-collapse: collapse;
+    }
+    .demo table td, .demo table th {
+      border: 1px solid #94a3b8;
+      padding: 6px 10px;
+    }
+
+    .demo label { font-size: 0.9rem; }
+    .demo input[type="text"], .demo input[type="number"], .demo select {
+      padding: 5px 8px;
+      border: 1px solid #94a3b8;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    button, .btn {
+      background: var(--accent);
+      color: #06263a;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: filter 0.15s ease;
+    }
+    button:hover, .btn:hover { filter: brightness(1.08); }
+
+    button.ghost {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+    button.solve {
+      background: transparent;
+      color: var(--accent-2);
+      border: 1px solid var(--accent-2);
+      margin-top: 6px;
+    }
+
+    .solution { margin-top: 12px; display: none; }
+    .solution.open { display: block; }
+
+    .solution h3 {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin: 0 0 6px;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      margin: 0 0 12px;
+    }
+    code { font-family: 'SF Mono', 'Fira Code', Consolas, monospace; font-size: 0.82rem; }
+
+    .label-code {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin: 10px 0 4px;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 8px;
+      margin-bottom: 26px;
+    }
+    .toc a {
+      color: var(--text);
+      text-decoration: none;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+    }
+    .toc a:hover { border-color: var(--accent); }
+
+    footer.site {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+      padding: 24px;
+      border-top: 1px solid var(--border);
+    }
+    footer.site a { color: var(--accent); }
+
+    /* Keep Google widget out of the way but functional */
+    #google_translate_element { display: none; }
+    .goog-te-banner-frame { display: none !important; }
+    body { top: 0 !important; }
+  </style>
+</head>
+<body>
+  <header class="site">
+    <div>
+      <h1 class="notranslate">JavaScript DOM Exercises</h1>
+      <div class="sub">13 bài luyện thao tác DOM — demo chạy trực tiếp + lời giải</div>
+    </div>
+    <div class="translate-bar">
+      <div id="google_translate_element"></div>
+      <button id="btnTranslateVi" class="btn">Dịch sang Tiếng Việt</button>
+      <button id="btnTranslateEn" class="ghost">English</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="intro">
+      Bộ bài tập tương tác dựa theo
+      <a href="https://www.w3resource.com/javascript-exercises/javascript-dom-exercises.php"
+         target="_blank" rel="noopener">w3resource — JavaScript DOM Exercises</a>.
+      Mỗi bài gồm đề, HTML mẫu, khu vực demo chạy được và nút <em>Xem lời giải</em>.
+      Mở trực tiếp file này trong trình duyệt là dùng được ngay.
+    </div>
+
+    <nav class="toc" aria-label="Danh sách bài tập">
+      <a href="#ex1">1. Style Paragraph</a>
+      <a href="#ex2">2. Get Form Values</a>
+      <a href="#ex3">3. Paragraph Background Color</a>
+      <a href="#ex4">4. Get Link Attributes</a>
+      <a href="#ex5">5. Add Table Rows</a>
+      <a href="#ex6">6. Update Table Cell</a>
+      <a href="#ex7">7. Create Table Dynamically</a>
+      <a href="#ex8">8. Remove Dropdown Item</a>
+      <a href="#ex9">9. Count Dropdown Items</a>
+      <a href="#ex10">10. Sphere Volume Calculator</a>
+      <a href="#ex11">11. Random Image Display</a>
+      <a href="#ex12">12. Highlight Bold on Hover</a>
+      <a href="#ex13">13. Window Resize Dimensions</a>
+    </nav>
+
+    <!-- 1 -->
+    <section class="exercise" id="ex1">
+      <h2><span class="num">1</span> Style Paragraph</h2>
+      <p class="prompt">Khi bấm nút, thay đổi font, cỡ chữ và màu của đoạn văn.</p>
+      <div class="demo">
+        <p id="ex1-text">JavaScript Exercises - w3resource</p>
+        <button id="ex1-btn">Style</button>
+      </div>
+      <button class="solve" data-target="ex1-sol">Xem lời giải</button>
+      <div class="solution" id="ex1-sol">
+        <h3>Solution</h3>
+        <pre><code>const p = document.getElementById('ex1-text');
+document.getElementById('ex1-btn').addEventListener('click', () =&gt; {
+  p.style.fontFamily = 'Georgia, serif';
+  p.style.fontSize = '22px';
+  p.style.color = '#e11d48';
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="exercise" id="ex2">
+      <h2><span class="num">2</span> Get Form Values</h2>
+      <p class="prompt">Lấy giá trị First name và Last name từ form khi submit.</p>
+      <div class="demo">
+        <form id="ex2-form">
+          <label>First name:
+            <input type="text" name="fname" value="David" />
+          </label><br /><br />
+          <label>Last name:
+            <input type="text" name="lname" value="Beckham" />
+          </label><br /><br />
+          <input type="submit" value="Submit" />
+        </form>
+        <div class="output" id="ex2-out"></div>
+      </div>
+      <button class="solve" data-target="ex2-sol">Xem lời giải</button>
+      <div class="solution" id="ex2-sol">
+        <h3>Solution</h3>
+        <pre><code>const form = document.getElementById('ex2-form');
+form.addEventListener('submit', (e) =&gt; {
+  e.preventDefault();
+  const first = form.elements['fname'].value;
+  const last = form.elements['lname'].value;
+  document.getElementById('ex2-out').textContent =
+    `First name: ${first}\nLast name: ${last}`;
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="exercise" id="ex3">
+      <h2><span class="num">3</span> Paragraph Background Color</h2>
+      <p class="prompt">Đặt màu nền cho đoạn văn khi bấm nút.</p>
+      <div class="demo">
+        <p id="ex3-text">This paragraph will get a background color.</p>
+        <button id="ex3-btn">Set background color</button>
+      </div>
+      <button class="solve" data-target="ex3-sol">Xem lời giải</button>
+      <div class="solution" id="ex3-sol">
+        <h3>Solution</h3>
+        <pre><code>document.getElementById('ex3-btn').addEventListener('click', () =&gt; {
+  document.getElementById('ex3-text').style.backgroundColor = '#fde047';
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="exercise" id="ex4">
+      <h2><span class="num">4</span> Get Link Attributes</h2>
+      <p class="prompt">Đọc các thuộc tính href, hreflang, rel, target và type của link.</p>
+      <div class="demo">
+        <p>
+          <a id="ex4-link" type="text/html" hreflang="en-us" rel="nofollow"
+             target="_self" href="https://www.w3resource.com/">w3resource</a>
+        </p>
+        <button id="ex4-btn">Get attributes</button>
+        <div class="output" id="ex4-out"></div>
+      </div>
+      <button class="solve" data-target="ex4-sol">Xem lời giải</button>
+      <div class="solution" id="ex4-sol">
+        <h3>Solution</h3>
+        <pre><code>document.getElementById('ex4-btn').addEventListener('click', () =&gt; {
+  const link = document.getElementById('ex4-link');
+  document.getElementById('ex4-out').textContent =
+    `href: ${link.getAttribute('href')}\n` +
+    `hreflang: ${link.getAttribute('hreflang')}\n` +
+    `rel: ${link.getAttribute('rel')}\n` +
+    `target: ${link.getAttribute('target')}\n` +
+    `type: ${link.getAttribute('type')}`;
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="exercise" id="ex5">
+      <h2><span class="num">5</span> Add Table Rows</h2>
+      <p class="prompt">Chèn thêm một dòng mới vào bảng khi bấm nút.</p>
+      <div class="demo">
+        <table id="ex5-table">
+          <tr><td>Row1 cell1</td><td>Row1 cell2</td></tr>
+          <tr><td>Row2 cell1</td><td>Row2 cell2</td></tr>
+        </table>
+        <br />
+        <input type="button" id="ex5-btn" value="Insert row" />
+      </div>
+      <button class="solve" data-target="ex5-sol">Xem lời giải</button>
+      <div class="solution" id="ex5-sol">
+        <h3>Solution</h3>
+        <pre><code>document.getElementById('ex5-btn').addEventListener('click', () =&gt; {
+  const table = document.getElementById('ex5-table');
+  const rowCount = table.rows.length;
+  const row = table.insertRow(rowCount);
+  const c1 = row.insertCell(0);
+  const c2 = row.insertCell(1);
+  c1.textContent = `Row${rowCount + 1} cell1`;
+  c2.textContent = `Row${rowCount + 1} cell2`;
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="exercise" id="ex6">
+      <h2><span class="num">6</span> Update Table Cell</h2>
+      <p class="prompt">Nhận row, column và chuỗi mới rồi cập nhật nội dung ô tương ứng.</p>
+      <div class="demo">
+        <table id="ex6-table">
+          <tr><td>Row1 cell1</td><td>Row1 cell2</td></tr>
+          <tr><td>Row2 cell1</td><td>Row2 cell2</td></tr>
+          <tr><td>Row3 cell1</td><td>Row3 cell2</td></tr>
+        </table>
+        <br />
+        <label>Row: <input type="number" id="ex6-row" value="0" min="0" style="width:60px" /></label>
+        <label>Col: <input type="number" id="ex6-col" value="0" min="0" style="width:60px" /></label>
+        <label>Text: <input type="text" id="ex6-val" value="Updated!" /></label>
+        <button id="ex6-btn">Change content</button>
+        <div class="output" id="ex6-out"></div>
+      </div>
+      <button class="solve" data-target="ex6-sol">Xem lời giải</button>
+      <div class="solution" id="ex6-sol">
+        <h3>Solution</h3>
+        <pre><code>function changeContent(row, col, value) {
+  const table = document.getElementById('ex6-table');
+  if (row &lt; table.rows.length &amp;&amp; col &lt; table.rows[row].cells.length) {
+    table.rows[row].cells[col].textContent = value;
+    return true;
+  }
+  return false;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="exercise" id="ex7">
+      <h2><span class="num">7</span> Create Table Dynamically</h2>
+      <p class="prompt">Nhập số hàng và cột để tạo bảng; mỗi ô hiển thị "Row-i Column-j".</p>
+      <div class="demo">
+        <label>Rows: <input type="number" id="ex7-rows" value="3" min="1" style="width:60px" /></label>
+        <label>Cols: <input type="number" id="ex7-cols" value="3" min="1" style="width:60px" /></label>
+        <button id="ex7-btn">Create the table</button>
+        <div id="ex7-holder" style="margin-top:10px"></div>
+      </div>
+      <button class="solve" data-target="ex7-sol">Xem lời giải</button>
+      <div class="solution" id="ex7-sol">
+        <h3>Solution</h3>
+        <pre><code>function createTable(rows, cols) {
+  const table = document.createElement('table');
+  for (let i = 0; i &lt; rows; i++) {
+    const tr = table.insertRow(i);
+    for (let j = 0; j &lt; cols; j++) {
+      const td = tr.insertCell(j);
+      td.textContent = `Row-${i} Column-${j}`;
+    }
+  }
+  const holder = document.getElementById('ex7-holder');
+  holder.innerHTML = '';
+  holder.appendChild(table);
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="exercise" id="ex8">
+      <h2><span class="num">8</span> Remove Dropdown Item</h2>
+      <p class="prompt">Xoá option đang được chọn khỏi drop-down list.</p>
+      <div class="demo">
+        <select id="ex8-select">
+          <option>Red</option>
+          <option>Green</option>
+          <option>White</option>
+          <option>Black</option>
+        </select>
+        <input type="button" id="ex8-btn" value="Select and Remove" />
+      </div>
+      <button class="solve" data-target="ex8-sol">Xem lời giải</button>
+      <div class="solution" id="ex8-sol">
+        <h3>Solution</h3>
+        <pre><code>document.getElementById('ex8-btn').addEventListener('click', () =&gt; {
+  const select = document.getElementById('ex8-select');
+  if (select.selectedIndex &gt;= 0) {
+    select.remove(select.selectedIndex);
+  }
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="exercise" id="ex9">
+      <h2><span class="num">9</span> Count Dropdown Items</h2>
+      <p class="prompt">Đếm và hiển thị số lượng option trong drop-down list.</p>
+      <div class="demo">
+        Select your favorite Color:
+        <select id="ex9-select">
+          <option>Red</option>
+          <option>Green</option>
+          <option>Blue</option>
+          <option>White</option>
+        </select>
+        <input type="button" id="ex9-btn" value="Count all items" />
+        <div class="output" id="ex9-out"></div>
+      </div>
+      <button class="solve" data-target="ex9-sol">Xem lời giải</button>
+      <div class="solution" id="ex9-sol">
+        <h3>Solution</h3>
+        <pre><code>document.getElementById('ex9-btn').addEventListener('click', () =&gt; {
+  const count = document.getElementById('ex9-select').options.length;
+  document.getElementById('ex9-out').textContent =
+    `Total items: ${count}`;
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="exercise" id="ex10">
+      <h2><span class="num">10</span> Sphere Volume Calculator</h2>
+      <p class="prompt">Tính thể tích hình cầu từ bán kính người dùng nhập.</p>
+      <div class="demo">
+        <label>Radius: <input type="number" id="ex10-r" value="5" min="0" step="any" style="width:90px" /></label>
+        <button id="ex10-btn">Calculate volume</button>
+        <div class="output" id="ex10-out"></div>
+      </div>
+      <button class="solve" data-target="ex10-sol">Xem lời giải</button>
+      <div class="solution" id="ex10-sol">
+        <h3>Solution</h3>
+        <pre><code>document.getElementById('ex10-btn').addEventListener('click', () =&gt; {
+  const r = parseFloat(document.getElementById('ex10-r').value);
+  const volume = (4 / 3) * Math.PI * Math.pow(r, 3);
+  document.getElementById('ex10-out').textContent =
+    `Volume: ${volume.toFixed(4)}`;
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section class="exercise" id="ex11">
+      <h2><span class="num">11</span> Random Image Display</h2>
+      <p class="prompt">Bấm nút để hiển thị một ảnh ngẫu nhiên từ danh sách.</p>
+      <div class="demo">
+        <button id="ex11-btn">Show random image</button>
+        <div id="ex11-holder" style="margin-top:10px"></div>
+      </div>
+      <button class="solve" data-target="ex11-sol">Xem lời giải</button>
+      <div class="solution" id="ex11-sol">
+        <h3>Solution</h3>
+        <pre><code>const images = [
+  { src: 'https://picsum.photos/id/1015/240/160', width: 240, height: 160 },
+  { src: 'https://picsum.photos/id/1025/320/195', width: 320, height: 195 },
+  { src: 'https://picsum.photos/id/1035/500/343', width: 500, height: 343 },
+];
+document.getElementById('ex11-btn').addEventListener('click', () =&gt; {
+  const pick = images[Math.floor(Math.random() * images.length)];
+  const img = document.createElement('img');
+  img.src = pick.src;
+  img.width = pick.width;
+  img.height = pick.height;
+  img.alt = 'Random';
+  const holder = document.getElementById('ex11-holder');
+  holder.innerHTML = '';
+  holder.appendChild(img);
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section class="exercise" id="ex12">
+      <h2><span class="num">12</span> Highlight Bold on Hover</h2>
+      <p class="prompt">Khi rê chuột lên link, tô sáng các từ in đậm trong đoạn văn.</p>
+      <div class="demo">
+        <p><a href="#ex12" id="ex12-link">[Rê chuột vào đây để tô sáng các từ in đậm]</a></p>
+        <p id="ex12-para">
+          <b>We</b> have just started <b>this</b> section for the users
+          (<b>beginner</b> to intermediate) who <b>want</b> to work with
+          <b>various</b> JavaScript <b>problems</b> and write scripts online to
+          <b>test</b> their JavaScript <b>skill</b>.
+        </p>
+      </div>
+      <button class="solve" data-target="ex12-sol">Xem lời giải</button>
+      <div class="solution" id="ex12-sol">
+        <h3>Solution</h3>
+        <pre><code>const link = document.getElementById('ex12-link');
+const bolds = document.querySelectorAll('#ex12-para b');
+link.addEventListener('mouseover', () =&gt; {
+  bolds.forEach((b) =&gt; { b.style.backgroundColor = '#fde047'; });
+});
+link.addEventListener('mouseout', () =&gt; {
+  bolds.forEach((b) =&gt; { b.style.backgroundColor = ''; });
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 13 -->
+    <section class="exercise" id="ex13">
+      <h2><span class="num">13</span> Window Resize Dimensions</h2>
+      <p class="prompt">Hiển thị chiều rộng/cao cửa sổ và cập nhật mỗi khi resize.</p>
+      <div class="demo">
+        <div class="output" id="ex13-out"></div>
+        <small>Thử thay đổi kích thước cửa sổ trình duyệt.</small>
+      </div>
+      <button class="solve" data-target="ex13-sol">Xem lời giải</button>
+      <div class="solution" id="ex13-sol">
+        <h3>Solution</h3>
+        <pre><code>function showSize() {
+  document.getElementById('ex13-out').textContent =
+    `Width: ${window.innerWidth}px, Height: ${window.innerHeight}px`;
+}
+window.addEventListener('resize', showSize);
+showSize();</code></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site">
+    Bài tập tham khảo từ
+    <a href="https://www.w3resource.com/javascript-exercises/javascript-dom-exercises.php"
+       target="_blank" rel="noopener">w3resource</a>.
+    Trang luyện tập tương tác chạy hoàn toàn ở local.
+  </footer>
+
+  <script>
+    // ---- Toggle solutions ----
+    document.querySelectorAll('button.solve').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const panel = document.getElementById(btn.dataset.target);
+        const open = panel.classList.toggle('open');
+        btn.textContent = open ? 'Ẩn lời giải' : 'Xem lời giải';
+      });
+    });
+
+    // ---- Exercise 1: Style Paragraph ----
+    (() => {
+      const p = document.getElementById('ex1-text');
+      document.getElementById('ex1-btn').addEventListener('click', () => {
+        p.style.fontFamily = 'Georgia, serif';
+        p.style.fontSize = '22px';
+        p.style.color = '#e11d48';
+      });
+    })();
+
+    // ---- Exercise 2: Get Form Values ----
+    (() => {
+      const form = document.getElementById('ex2-form');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const first = form.elements['fname'].value;
+        const last = form.elements['lname'].value;
+        document.getElementById('ex2-out').textContent =
+          `First name: ${first}\nLast name: ${last}`;
+      });
+    })();
+
+    // ---- Exercise 3: Paragraph Background Color ----
+    (() => {
+      document.getElementById('ex3-btn').addEventListener('click', () => {
+        document.getElementById('ex3-text').style.backgroundColor = '#fde047';
+      });
+    })();
+
+    // ---- Exercise 4: Get Link Attributes ----
+    (() => {
+      document.getElementById('ex4-btn').addEventListener('click', () => {
+        const link = document.getElementById('ex4-link');
+        document.getElementById('ex4-out').textContent =
+          `href: ${link.getAttribute('href')}\n` +
+          `hreflang: ${link.getAttribute('hreflang')}\n` +
+          `rel: ${link.getAttribute('rel')}\n` +
+          `target: ${link.getAttribute('target')}\n` +
+          `type: ${link.getAttribute('type')}`;
+      });
+    })();
+
+    // ---- Exercise 5: Add Table Rows ----
+    (() => {
+      document.getElementById('ex5-btn').addEventListener('click', () => {
+        const table = document.getElementById('ex5-table');
+        const rowCount = table.rows.length;
+        const row = table.insertRow(rowCount);
+        row.insertCell(0).textContent = `Row${rowCount + 1} cell1`;
+        row.insertCell(1).textContent = `Row${rowCount + 1} cell2`;
+      });
+    })();
+
+    // ---- Exercise 6: Update Table Cell ----
+    (() => {
+      document.getElementById('ex6-btn').addEventListener('click', () => {
+        const table = document.getElementById('ex6-table');
+        const row = parseInt(document.getElementById('ex6-row').value, 10);
+        const col = parseInt(document.getElementById('ex6-col').value, 10);
+        const val = document.getElementById('ex6-val').value;
+        const out = document.getElementById('ex6-out');
+        if (row >= 0 && row < table.rows.length &&
+            col >= 0 && col < table.rows[row].cells.length) {
+          table.rows[row].cells[col].textContent = val;
+          out.textContent = `Đã cập nhật ô [${row}][${col}].`;
+        } else {
+          out.textContent = 'Row hoặc Col không hợp lệ.';
+        }
+      });
+    })();
+
+    // ---- Exercise 7: Create Table Dynamically ----
+    (() => {
+      document.getElementById('ex7-btn').addEventListener('click', () => {
+        const rows = parseInt(document.getElementById('ex7-rows').value, 10) || 0;
+        const cols = parseInt(document.getElementById('ex7-cols').value, 10) || 0;
+        const table = document.createElement('table');
+        for (let i = 0; i < rows; i++) {
+          const tr = table.insertRow(i);
+          for (let j = 0; j < cols; j++) {
+            tr.insertCell(j).textContent = `Row-${i} Column-${j}`;
+          }
+        }
+        const holder = document.getElementById('ex7-holder');
+        holder.innerHTML = '';
+        holder.appendChild(table);
+      });
+    })();
+
+    // ---- Exercise 8: Remove Dropdown Item ----
+    (() => {
+      document.getElementById('ex8-btn').addEventListener('click', () => {
+        const select = document.getElementById('ex8-select');
+        if (select.selectedIndex >= 0) {
+          select.remove(select.selectedIndex);
+        }
+      });
+    })();
+
+    // ---- Exercise 9: Count Dropdown Items ----
+    (() => {
+      document.getElementById('ex9-btn').addEventListener('click', () => {
+        const count = document.getElementById('ex9-select').options.length;
+        document.getElementById('ex9-out').textContent = `Total items: ${count}`;
+      });
+    })();
+
+    // ---- Exercise 10: Sphere Volume Calculator ----
+    (() => {
+      document.getElementById('ex10-btn').addEventListener('click', () => {
+        const r = parseFloat(document.getElementById('ex10-r').value);
+        const out = document.getElementById('ex10-out');
+        if (Number.isNaN(r) || r < 0) {
+          out.textContent = 'Nhập bán kính hợp lệ (>= 0).';
+          return;
+        }
+        const volume = (4 / 3) * Math.PI * Math.pow(r, 3);
+        out.textContent = `Volume: ${volume.toFixed(4)}`;
+      });
+    })();
+
+    // ---- Exercise 11: Random Image Display ----
+    (() => {
+      const images = [
+        { src: 'https://picsum.photos/id/1015/240/160', width: 240, height: 160 },
+        { src: 'https://picsum.photos/id/1025/320/195', width: 320, height: 195 },
+        { src: 'https://picsum.photos/id/1035/500/343', width: 500, height: 343 },
+      ];
+      document.getElementById('ex11-btn').addEventListener('click', () => {
+        const pick = images[Math.floor(Math.random() * images.length)];
+        const img = document.createElement('img');
+        img.src = pick.src;
+        img.width = pick.width;
+        img.height = pick.height;
+        img.alt = 'Random';
+        const holder = document.getElementById('ex11-holder');
+        holder.innerHTML = '';
+        holder.appendChild(img);
+      });
+    })();
+
+    // ---- Exercise 12: Highlight Bold on Hover ----
+    (() => {
+      const link = document.getElementById('ex12-link');
+      const bolds = document.querySelectorAll('#ex12-para b');
+      link.addEventListener('mouseover', () => {
+        bolds.forEach((b) => { b.style.backgroundColor = '#fde047'; });
+      });
+      link.addEventListener('mouseout', () => {
+        bolds.forEach((b) => { b.style.backgroundColor = ''; });
+      });
+    })();
+
+    // ---- Exercise 13: Window Resize Dimensions ----
+    (() => {
+      function showSize() {
+        document.getElementById('ex13-out').textContent =
+          `Width: ${window.innerWidth}px, Height: ${window.innerHeight}px`;
+      }
+      window.addEventListener('resize', showSize);
+      showSize();
+    })();
+
+    // ---- Google Translate (trigger on demand) ----
+    function googleTranslateElementInit() {
+      /* global google */
+      new google.translate.TranslateElement(
+        { pageLanguage: 'en', includedLanguages: 'en,vi', autoDisplay: false },
+        'google_translate_element'
+      );
+    }
+    window.googleTranslateElementInit = googleTranslateElementInit;
+
+    (() => {
+      const script = document.createElement('script');
+      script.src =
+        'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      document.head.appendChild(script);
+    })();
+
+    // Widget nạp bất đồng bộ, nên thử lại cho tới khi combo sẵn sàng.
+    function setTranslateLanguage(lang, attempt = 0) {
+      const combo = document.querySelector('.goog-te-combo');
+      if (combo) {
+        combo.value = lang;
+        combo.dispatchEvent(new Event('change'));
+        return;
+      }
+      if (attempt < 30) {
+        setTimeout(() => setTranslateLanguage(lang, attempt + 1), 300);
+      } else {
+        alert('Không tải được Google Translate. Kiểm tra kết nối mạng.');
+      }
+    }
+
+    document.getElementById('btnTranslateVi')
+      .addEventListener('click', () => setTranslateLanguage('vi'));
+    document.getElementById('btnTranslateEn')
+      .addEventListener('click', () => setTranslateLanguage('en'));
+  </script>
+</body>
+</html>
