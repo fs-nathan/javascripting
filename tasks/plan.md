@@ -1,45 +1,43 @@
-# Plan: JavaScript DOM Exercises — Local Interactive Page
+# Plan: 30 Days of JavaScript — Interactive Exercises
 
 ## Context
-- Nguồn tham chiếu: w3resource JavaScript DOM Exercises (13 bài chính).
-- Deliverable: **1 file** `dom-exercises.html` (CSS/JS inline), chạy trực tiếp qua
-  `file://` hoặc static server.
-- Mỗi bài = 1 vertical slice: đề bài → HTML mẫu → demo chạy → lời giải ẩn/hiện.
+- Spec: `docs/specs/30-days-js.md`
+- Pattern: reuse UI/UX of `dom-exercises.html` (sticky header, TOC, cards,
+  solution toggle, Google Translate on-demand)
+- Deliverable: **one file** `30-days-exercises.html`
+- Source curriculum: [Asabeneh/30-Days-Of-JavaScript](https://github.com/Asabeneh/30-Days-Of-JavaScript)
 
-## Vertical Slices (mỗi bài là 1 slice hoàn chỉnh)
-Mỗi slice gồm markup + demo tương tác + code solution trong cùng một card.
+## Vertical Slices
+Mỗi ngày = 1 slice hoàn chỉnh: đề bài → demo chạy → lời giải ẩn/hiện.
 
-## Phase 1: Foundation (khung trang)
-- Cấu trúc HTML5, meta, tiêu đề trang.
-- CSS: layout card, typography, code block, nút, responsive.
-- Component "exercise card" tái sử dụng (đề, HTML mẫu, demo, toggle solution).
-- Thanh điều khiển dịch (nút VI / EN) + widget Google Translate ẩn.
+## Phase 1: Foundation
+- HTML5 shell, CSS (clone visual language từ DOM page)
+- Sticky header + Translate VI/EN
+- Intro + TOC Day 01–30
+- Shared JS: solution toggle, translate helpers
 
-## Phase 2: 13 bài tập
-1. Style Paragraph — đổi font/size/color khi bấm nút.
-2. Get Form Values — lấy first/last name từ form.
-3. Paragraph Background Color — set màu nền đoạn văn.
-4. Get Link Attributes — đọc href/hreflang/rel/target/type.
-5. Add Table Rows — chèn dòng vào bảng.
-6. Update Table Cell — cập nhật ô theo row/col.
-7. Create Table Dynamically — tạo bảng theo số hàng/cột.
-8. Remove Dropdown Item — xoá option đang chọn.
-9. Count Dropdown Items — đếm số option.
-10. Sphere Volume Calculator — tính thể tích hình cầu.
-11. Random Image Display — hiện ảnh ngẫu nhiên.
-12. Highlight Bold on Hover — hover link → tô đậm từ in đậm.
-13. Window Resize Dimensions — hiện width/height, cập nhật khi resize.
+## Phase 2: Days 01–15 (language fundamentals)
+01 Intro → 02 Data Types → 03 Booleans/Date → 04 Conditionals → 05 Arrays →
+06 Loops → 07 Functions → 08 Objects → 09 HOF → 10 Sets/Maps →
+11 Destructuring → 12 Regex → 13 Console → 14 Errors → 15 Classes
 
-## Phase 3: Google Translate + Polish
-- Nút "Dịch sang Tiếng Việt" và "English" trigger `.goog-te-combo`.
-- Kiểm tra console, responsive, sửa lint.
+## Phase 3: Days 16–30 (browser + mini projects)
+16 JSON → 17 localStorage → 18 Promises → 19 Closures → 20 Clean Code →
+21 DOM → 22 Manipulate DOM → 23 Events → 24 Solar weight → 25 Top countries →
+26 Filter countries → 27 Portfolio toggle → 28 Leaderboard → 29 Animate text →
+30 Project idea generator
 
-## Checkpoint
-- [ ] 13 card đầy đủ, demo chạy đúng.
-- [ ] Toggle lời giải hoạt động.
-- [ ] Nút dịch chuyển trang sang Tiếng Việt.
-- [ ] Không lỗi console.
+## Checkpoints
+1. Foundation: trang mở được, TOC + translate buttons hiện.
+2. Core: cả 30 demo chạy đúng, solution toggle OK.
+3. Polish: console sạch, attribution nguồn, commit.
 
 ## Verification
-- Mở file trên trình duyệt, thao tác từng demo.
-- Bấm nút dịch, xác nhận nội dung đổi ngôn ngữ.
+- `python3 -m http.server` → mở `/30-days-exercises.html`
+- Smoke-test vài demo mỗi phase + Day 17/18/24/25
+- Bấm dịch VI (cần mạng)
+
+## Files
+- Create: `30-days-exercises.html`
+- Update: `tasks/plan.md`, `tasks/todo.md`
+- Already exists: `docs/specs/30-days-js.md`

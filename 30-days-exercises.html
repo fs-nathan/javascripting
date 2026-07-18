@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>30 Days of JavaScript — Interactive Exercises</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-2: #273549;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --border: #334155;
+      --code-bg: #0b1120;
+      --warn: #fbbf24;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    header.site {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header.site h1 { margin: 0; font-size: 1.15rem; font-weight: 700; }
+    header.site .sub { color: var(--muted); font-size: 0.85rem; }
+    .translate-bar { display: flex; align-items: center; gap: 8px; }
+    .container { max-width: 960px; margin: 0 auto; padding: 24px 16px 80px; }
+    .intro {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .intro a { color: var(--accent); }
+    .toc {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px;
+      margin-bottom: 26px;
+    }
+    .toc a {
+      color: var(--text);
+      text-decoration: none;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+    }
+    .toc a:hover { border-color: var(--accent); }
+    .exercise {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 22px;
+      margin-bottom: 22px;
+      scroll-margin-top: 90px;
+    }
+    .exercise h2 {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .exercise h2 .num {
+      color: var(--bg);
+      background: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+    .prompt { color: var(--muted); margin: 0 0 14px; }
+    .demo {
+      background: #fff;
+      color: #1e293b;
+      border-radius: 10px;
+      padding: 16px;
+      margin: 12px 0;
+      border: 1px solid #cbd5e1;
+    }
+    .demo :is(button, input[type="button"], input[type="submit"]) { cursor: pointer; }
+    .demo .output {
+      margin-top: 10px;
+      padding: 8px 10px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      min-height: 1.2em;
+      white-space: pre-wrap;
+      color: #0f172a;
+      font-family: 'SF Mono', Consolas, monospace;
+    }
+    .demo label { font-size: 0.9rem; margin-right: 8px; }
+    .demo input[type="text"],
+    .demo input[type="number"],
+    .demo input[type="email"],
+    .demo select,
+    .demo textarea {
+      padding: 5px 8px;
+      border: 1px solid #94a3b8;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      margin: 4px 0;
+    }
+    .demo textarea { width: 100%; min-height: 70px; font-family: inherit; }
+    .demo table { border-collapse: collapse; width: 100%; margin-top: 8px; }
+    .demo table td, .demo table th {
+      border: 1px solid #94a3b8;
+      padding: 6px 10px;
+      text-align: left;
+    }
+    .demo .bar {
+      height: 18px;
+      background: #38bdf8;
+      border-radius: 4px;
+      margin: 4px 0;
+      color: #0f172a;
+      font-size: 0.75rem;
+      padding-left: 6px;
+      line-height: 18px;
+      white-space: nowrap;
+    }
+    .demo .skill {
+      display: inline-block;
+      padding: 4px 10px;
+      margin: 3px;
+      border-radius: 6px;
+      background: #e2e8f0;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .demo .skill.on { background: #38bdf8; color: #0f172a; font-weight: 600; }
+    .demo .anim-text {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      transition: color 0.3s, transform 0.3s, letter-spacing 0.3s;
+    }
+    .demo .anim-text.pulse {
+      color: #e11d48;
+      transform: scale(1.08);
+      letter-spacing: 0.2em;
+    }
+    button, .btn {
+      background: var(--accent);
+      color: #06263a;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover, .btn:hover { filter: brightness(1.08); }
+    button.ghost {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+    button.solve {
+      background: transparent;
+      color: var(--accent-2);
+      border: 1px solid var(--accent-2);
+      margin-top: 6px;
+    }
+    .demo button, .demo .btn {
+      background: #0ea5e9;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-weight: 600;
+      margin: 2px 4px 2px 0;
+    }
+    .solution { margin-top: 12px; display: none; }
+    .solution.open { display: block; }
+    .solution h3 {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin: 0 0 6px;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      margin: 0;
+    }
+    code { font-family: 'SF Mono', 'Fira Code', Consolas, monospace; font-size: 0.82rem; }
+    footer.site {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+      padding: 24px;
+      border-top: 1px solid var(--border);
+    }
+    footer.site a { color: var(--accent); }
+    #google_translate_element { display: none; }
+    .goog-te-banner-frame { display: none !important; }
+    body { top: 0 !important; }
+  </style>
+</head>
+<body>
+  <header class="site">
+    <div>
+      <h1 class="notranslate">30 Days of JavaScript</h1>
+      <div class="sub">30 bài đại diện theo lộ trình — demo chạy trực tiếp + lời giải</div>
+    </div>
+    <div class="translate-bar">
+      <div id="google_translate_element"></div>
+      <button id="btnTranslateVi" class="btn">Dịch sang Tiếng Việt</button>
+      <button id="btnTranslateEn" class="ghost">English</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="intro">
+      Bộ bài tập tương tác dựa theo lộ trình
+      <a href="https://github.com/Asabeneh/30-Days-Of-JavaScript" target="_blank" rel="noopener">
+        Asabeneh — 30 Days Of JavaScript</a>.
+      Mỗi ngày 1 bài đại diện: đề ngắn, demo chạy được, nút <em>Xem lời giải</em>.
+      Mở qua localhost hoặc trực tiếp file HTML.
+    </div>
+
+    <nav class="toc" aria-label="Days">
+      <a href="#d01">01. Introduction</a>
+      <a href="#d02">02. Data Types</a>
+      <a href="#d03">03. Booleans &amp; Date</a>
+      <a href="#d04">04. Conditionals</a>
+      <a href="#d05">05. Arrays</a>
+      <a href="#d06">06. Loops</a>
+      <a href="#d07">07. Functions</a>
+      <a href="#d08">08. Objects</a>
+      <a href="#d09">09. Higher Order Fns</a>
+      <a href="#d10">10. Sets &amp; Maps</a>
+      <a href="#d11">11. Destructuring</a>
+      <a href="#d12">12. Regular Expressions</a>
+      <a href="#d13">13. Console Methods</a>
+      <a href="#d14">14. Error Handling</a>
+      <a href="#d15">15. Classes</a>
+      <a href="#d16">16. JSON</a>
+      <a href="#d17">17. Web Storages</a>
+      <a href="#d18">18. Promises</a>
+      <a href="#d19">19. Closures</a>
+      <a href="#d20">20. Clean Code</a>
+      <a href="#d21">21. DOM</a>
+      <a href="#d22">22. Manipulating DOM</a>
+      <a href="#d23">23. Event Listeners</a>
+      <a href="#d24">24. Solar System</a>
+      <a href="#d25">25. Countries Viz 1</a>
+      <a href="#d26">26. Countries Viz 2</a>
+      <a href="#d27">27. Portfolio</a>
+      <a href="#d28">28. Leaderboard</a>
+      <a href="#d29">29. Animating Text</a>
+      <a href="#d30">30. Final Projects</a>
+    </nav>
+
+    <!-- Day 01 -->
+    <section class="exercise" id="d01">
+      <h2><span class="num">01</span> Introduction</h2>
+      <p class="prompt">Khai báo biến và in kết quả phép toán + <code>typeof</code> lên output.</p>
+      <div class="demo">
+        <button id="d01-btn">Run intro demo</button>
+        <div class="output" id="d01-out"></div>
+      </div>
+      <button class="solve" data-target="d01-sol">Xem lời giải</button>
+      <div class="solution" id="d01-sol">
+        <h3>Solution</h3>
+        <pre><code>const firstName = 'Asabeneh';
+const year = 2020;
+const sum = 2 + 3;
+document.getElementById('d01-out').textContent =
+  `Name: ${firstName}\n2 + 3 = ${sum}\ntypeof year: ${typeof year}`;</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 02 -->
+    <section class="exercise" id="d02">
+      <h2><span class="num">02</span> Data Types</h2>
+      <p class="prompt">Nhập giá trị, kiểm tra kiểu và ép sang Number / String / Boolean.</p>
+      <div class="demo">
+        <label>Value: <input type="text" id="d02-val" value="42" /></label>
+        <button id="d02-btn">Inspect types</button>
+        <div class="output" id="d02-out"></div>
+      </div>
+      <button class="solve" data-target="d02-sol">Xem lời giải</button>
+      <div class="solution" id="d02-sol">
+        <h3>Solution</h3>
+        <pre><code>const raw = document.getElementById('d02-val').value;
+const asNum = Number(raw);
+document.getElementById('d02-out').textContent =
+  `raw typeof: ${typeof raw}\nNumber(raw): ${asNum} (${typeof asNum})\n` +
+  `String(true): ${String(true)}\nBoolean(''): ${Boolean('')}`;</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 03 -->
+    <section class="exercise" id="d03">
+      <h2><span class="num">03</span> Booleans, Operators, Date</h2>
+      <p class="prompt">So sánh hai số và hiển thị ngày giờ hiện tại đã format.</p>
+      <div class="demo">
+        <label>A: <input type="number" id="d03-a" value="10" style="width:70px" /></label>
+        <label>B: <input type="number" id="d03-b" value="7" style="width:70px" /></label>
+        <button id="d03-btn">Compare &amp; show date</button>
+        <div class="output" id="d03-out"></div>
+      </div>
+      <button class="solve" data-target="d03-sol">Xem lời giải</button>
+      <div class="solution" id="d03-sol">
+        <h3>Solution</h3>
+        <pre><code>const a = Number(document.getElementById('d03-a').value);
+const b = Number(document.getElementById('d03-b').value);
+const now = new Date();
+const pad = (n) =&gt; String(n).padStart(2, '0');
+const stamp = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ` +
+  `${pad(now.getHours())}:${pad(now.getMinutes())}`;</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 04 -->
+    <section class="exercise" id="d04">
+      <h2><span class="num">04</span> Conditionals</h2>
+      <p class="prompt">Nhập điểm 0–100, phân loại A/B/C/D/F bằng if–else.</p>
+      <div class="demo">
+        <label>Score: <input type="number" id="d04-score" value="85" min="0" max="100" style="width:80px" /></label>
+        <button id="d04-btn">Get grade</button>
+        <div class="output" id="d04-out"></div>
+      </div>
+      <button class="solve" data-target="d04-sol">Xem lời giải</button>
+      <div class="solution" id="d04-sol">
+        <h3>Solution</h3>
+        <pre><code>const score = Number(document.getElementById('d04-score').value);
+let grade;
+if (score &gt;= 90) grade = 'A';
+else if (score &gt;= 80) grade = 'B';
+else if (score &gt;= 70) grade = 'C';
+else if (score &gt;= 60) grade = 'D';
+else grade = 'F';</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 05 -->
+    <section class="exercise" id="d05">
+      <h2><span class="num">05</span> Arrays</h2>
+      <p class="prompt">Thêm / xóa phần tử và slice mảng countries.</p>
+      <div class="demo">
+        <label>New country: <input type="text" id="d05-item" value="Vietnam" /></label>
+        <button id="d05-push">push</button>
+        <button id="d05-pop">pop</button>
+        <button id="d05-slice">slice(0, 3)</button>
+        <div class="output" id="d05-out"></div>
+      </div>
+      <button class="solve" data-target="d05-sol">Xem lời giải</button>
+      <div class="solution" id="d05-sol">
+        <h3>Solution</h3>
+        <pre><code>let countries = ['Finland', 'Sweden', 'Norway', 'Denmark'];
+countries.push(document.getElementById('d05-item').value);
+countries.pop();
+const first3 = countries.slice(0, 3);</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 06 -->
+    <section class="exercise" id="d06">
+      <h2><span class="num">06</span> Loops</h2>
+      <p class="prompt">Sinh dãy 1..N và tính tổng bằng vòng lặp <code>for</code>.</p>
+      <div class="demo">
+        <label>N: <input type="number" id="d06-n" value="10" min="1" max="100" style="width:70px" /></label>
+        <button id="d06-btn">Sum 1..N</button>
+        <div class="output" id="d06-out"></div>
+      </div>
+      <button class="solve" data-target="d06-sol">Xem lời giải</button>
+      <div class="solution" id="d06-sol">
+        <h3>Solution</h3>
+        <pre><code>const n = Number(document.getElementById('d06-n').value);
+let sum = 0;
+const seq = [];
+for (let i = 1; i &lt;= n; i++) {
+  seq.push(i);
+  sum += i;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 07 -->
+    <section class="exercise" id="d07">
+      <h2><span class="num">07</span> Functions</h2>
+      <p class="prompt">Viết hàm tính BMI từ cân nặng (kg) và chiều cao (m).</p>
+      <div class="demo">
+        <label>kg: <input type="number" id="d07-w" value="70" step="any" style="width:70px" /></label>
+        <label>m: <input type="number" id="d07-h" value="1.75" step="any" style="width:70px" /></label>
+        <button id="d07-btn">Calculate BMI</button>
+        <div class="output" id="d07-out"></div>
+      </div>
+      <button class="solve" data-target="d07-sol">Xem lời giải</button>
+      <div class="solution" id="d07-sol">
+        <h3>Solution</h3>
+        <pre><code>function calcBmi(weight, height) {
+  return weight / (height * height);
+}
+const bmi = calcBmi(70, 1.75);</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 08 -->
+    <section class="exercise" id="d08">
+      <h2><span class="num">08</span> Objects</h2>
+      <p class="prompt">Tạo object person, cập nhật age và liệt kê keys.</p>
+      <div class="demo">
+        <label>Name: <input type="text" id="d08-name" value="Alex" /></label>
+        <label>Age: <input type="number" id="d08-age" value="25" style="width:70px" /></label>
+        <button id="d08-btn">Build object</button>
+        <div class="output" id="d08-out"></div>
+      </div>
+      <button class="solve" data-target="d08-sol">Xem lời giải</button>
+      <div class="solution" id="d08-sol">
+        <h3>Solution</h3>
+        <pre><code>const person = {
+  name: document.getElementById('d08-name').value,
+  age: Number(document.getElementById('d08-age').value),
+  country: 'VN',
+};
+person.age += 1;
+const keys = Object.keys(person);</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 09 -->
+    <section class="exercise" id="d09">
+      <h2><span class="num">09</span> Higher Order Functions</h2>
+      <p class="prompt">Dùng <code>map</code>, <code>filter</code>, <code>reduce</code> trên mảng số.</p>
+      <div class="demo">
+        <button id="d09-btn">Run map / filter / reduce</button>
+        <div class="output" id="d09-out"></div>
+      </div>
+      <button class="solve" data-target="d09-sol">Xem lời giải</button>
+      <div class="solution" id="d09-sol">
+        <h3>Solution</h3>
+        <pre><code>const nums = [1, 2, 3, 4, 5, 6];
+const doubled = nums.map((n) =&gt; n * 2);
+const evens = nums.filter((n) =&gt; n % 2 === 0);
+const total = nums.reduce((acc, n) =&gt; acc + n, 0);</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 10 -->
+    <section class="exercise" id="d10">
+      <h2><span class="num">10</span> Sets and Maps</h2>
+      <p class="prompt">Loại trùng bằng Set; tra cứu thủ đô bằng Map.</p>
+      <div class="demo">
+        <label>Lookup: <input type="text" id="d10-key" value="Finland" /></label>
+        <button id="d10-btn">Unique + Map get</button>
+        <div class="output" id="d10-out"></div>
+      </div>
+      <button class="solve" data-target="d10-sol">Xem lời giải</button>
+      <div class="solution" id="d10-sol">
+        <h3>Solution</h3>
+        <pre><code>const unique = [...new Set(['a', 'b', 'a', 'c'])];
+const capitals = new Map([
+  ['Finland', 'Helsinki'],
+  ['Sweden', 'Stockholm'],
+]);
+capitals.get('Finland');</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 11 -->
+    <section class="exercise" id="d11">
+      <h2><span class="num">11</span> Destructuring &amp; Spreading</h2>
+      <p class="prompt">Destructuring object/array và merge bằng spread.</p>
+      <div class="demo">
+        <button id="d11-btn">Run destructuring demo</button>
+        <div class="output" id="d11-out"></div>
+      </div>
+      <button class="solve" data-target="d11-sol">Xem lời giải</button>
+      <div class="solution" id="d11-sol">
+        <h3>Solution</h3>
+        <pre><code>const user = { name: 'Alex', age: 25, city: 'Hanoi' };
+const { name, city } = user;
+const [first, ...rest] = [10, 20, 30, 40];
+const merged = { ...user, city: 'Da Nang' };</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 12 -->
+    <section class="exercise" id="d12">
+      <h2><span class="num">12</span> Regular Expressions</h2>
+      <p class="prompt">Validate email bằng regex.</p>
+      <div class="demo">
+        <label>Email: <input type="email" id="d12-email" value="user@example.com" style="width:220px" /></label>
+        <button id="d12-btn">Validate</button>
+        <div class="output" id="d12-out"></div>
+      </div>
+      <button class="solve" data-target="d12-sol">Xem lời giải</button>
+      <div class="solution" id="d12-sol">
+        <h3>Solution</h3>
+        <pre><code>const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ok = pattern.test(document.getElementById('d12-email').value);</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 13 -->
+    <section class="exercise" id="d13">
+      <h2><span class="num">13</span> Console Object Methods</h2>
+      <p class="prompt">Gọi <code>console.table</code> / <code>console.group</code> và mirror kết quả lên UI.</p>
+      <div class="demo">
+        <button id="d13-btn">Log table + group</button>
+        <div class="output" id="d13-out"></div>
+      </div>
+      <button class="solve" data-target="d13-sol">Xem lời giải</button>
+      <div class="solution" id="d13-sol">
+        <h3>Solution</h3>
+        <pre><code>const rows = [{ name: 'Alex', age: 25 }, { name: 'Sam', age: 30 }];
+console.table(rows);
+console.group('People');
+rows.forEach((r) =&gt; console.log(r.name));
+console.groupEnd();</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 14 -->
+    <section class="exercise" id="d14">
+      <h2><span class="num">14</span> Error Handling</h2>
+      <p class="prompt">Parse JSON; bắt lỗi bằng try/catch khi chuỗi không hợp lệ.</p>
+      <div class="demo">
+        <textarea id="d14-json">{"ok": true}</textarea>
+        <button id="d14-btn">Parse JSON</button>
+        <div class="output" id="d14-out"></div>
+      </div>
+      <button class="solve" data-target="d14-sol">Xem lời giải</button>
+      <div class="solution" id="d14-sol">
+        <h3>Solution</h3>
+        <pre><code>try {
+  const data = JSON.parse(document.getElementById('d14-json').value);
+  out.textContent = 'Parsed: ' + JSON.stringify(data);
+} catch (err) {
+  out.textContent = 'Error: ' + err.message;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 15 -->
+    <section class="exercise" id="d15">
+      <h2><span class="num">15</span> Classes</h2>
+      <p class="prompt">Tạo class Person với method <code>getInfo()</code>.</p>
+      <div class="demo">
+        <label>Name: <input type="text" id="d15-name" value="Jordan" /></label>
+        <label>Age: <input type="number" id="d15-age" value="22" style="width:70px" /></label>
+        <button id="d15-btn">new Person()</button>
+        <div class="output" id="d15-out"></div>
+      </div>
+      <button class="solve" data-target="d15-sol">Xem lời giải</button>
+      <div class="solution" id="d15-sol">
+        <h3>Solution</h3>
+        <pre><code>class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+  getInfo() {
+    return `${this.name} is ${this.age} years old.`;
+  }
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 16 -->
+    <section class="exercise" id="d16">
+      <h2><span class="num">16</span> JSON</h2>
+      <p class="prompt"><code>JSON.stringify</code> object rồi <code>JSON.parse</code> lại.</p>
+      <div class="demo">
+        <button id="d16-btn">Stringify ↔ Parse</button>
+        <div class="output" id="d16-out"></div>
+      </div>
+      <button class="solve" data-target="d16-sol">Xem lời giải</button>
+      <div class="solution" id="d16-sol">
+        <h3>Solution</h3>
+        <pre><code>const obj = { skills: ['JS', 'HTML'], level: 'beginner' };
+const str = JSON.stringify(obj, null, 2);
+const back = JSON.parse(str);</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 17 -->
+    <section class="exercise" id="d17">
+      <h2><span class="num">17</span> Web Storages</h2>
+      <p class="prompt">Lưu / đọc note bằng <code>localStorage</code>.</p>
+      <div class="demo">
+        <input type="text" id="d17-note" placeholder="Type a note..." style="width:60%" />
+        <button id="d17-save">Save</button>
+        <button id="d17-load">Load</button>
+        <button id="d17-clear">Clear</button>
+        <div class="output" id="d17-out"></div>
+      </div>
+      <button class="solve" data-target="d17-sol">Xem lời giải</button>
+      <div class="solution" id="d17-sol">
+        <h3>Solution</h3>
+        <pre><code>localStorage.setItem('d17-note', value);
+const saved = localStorage.getItem('d17-note');
+localStorage.removeItem('d17-note');</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 18 -->
+    <section class="exercise" id="d18">
+      <h2><span class="num">18</span> Promises</h2>
+      <p class="prompt">Giả lập fetch bằng Promise + async/await (delay 800ms).</p>
+      <div class="demo">
+        <button id="d18-btn">Fetch (fake)</button>
+        <div class="output" id="d18-out">Idle</div>
+      </div>
+      <button class="solve" data-target="d18-sol">Xem lời giải</button>
+      <div class="solution" id="d18-sol">
+        <h3>Solution</h3>
+        <pre><code>function fakeFetch() {
+  return new Promise((resolve) =&gt; {
+    setTimeout(() =&gt; resolve({ message: 'Hello from Promise' }), 800);
+  });
+}
+async function run() {
+  const data = await fakeFetch();
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 19 -->
+    <section class="exercise" id="d19">
+      <h2><span class="num">19</span> Closures</h2>
+      <p class="prompt">Counter factory dùng closure để giữ state riêng.</p>
+      <div class="demo">
+        <button id="d19-inc">+1</button>
+        <button id="d19-dec">-1</button>
+        <button id="d19-reset">Reset</button>
+        <div class="output" id="d19-out">0</div>
+      </div>
+      <button class="solve" data-target="d19-sol">Xem lời giải</button>
+      <div class="solution" id="d19-sol">
+        <h3>Solution</h3>
+        <pre><code>function createCounter() {
+  let count = 0;
+  return {
+    inc() { return ++count; },
+    dec() { return --count; },
+    reset() { count = 0; return count; },
+  };
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 20 -->
+    <section class="exercise" id="d20">
+      <h2><span class="num">20</span> Writing Clean Code</h2>
+      <p class="prompt">So sánh hàm “xấu” (tên ngắn, magic number) với phiên bản sạch.</p>
+      <div class="demo">
+        <label>Price: <input type="number" id="d20-price" value="100" style="width:80px" /></label>
+        <button id="d20-btn">Compare bad vs clean</button>
+        <div class="output" id="d20-out"></div>
+      </div>
+      <button class="solve" data-target="d20-sol">Xem lời giải</button>
+      <div class="solution" id="d20-sol">
+        <h3>Solution</h3>
+        <pre><code>// Bad
+function t(p) { return p * 1.1; }
+// Clean
+const TAX_RATE = 0.1;
+function calculatePriceWithTax(price) {
+  return price * (1 + TAX_RATE);
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 21 -->
+    <section class="exercise" id="d21">
+      <h2><span class="num">21</span> DOM</h2>
+      <p class="prompt">Đổi text và màu của phần tử theo id.</p>
+      <div class="demo">
+        <p id="d21-text">Hello DOM</p>
+        <button id="d21-btn">Update element</button>
+      </div>
+      <button class="solve" data-target="d21-sol">Xem lời giải</button>
+      <div class="solution" id="d21-sol">
+        <h3>Solution</h3>
+        <pre><code>const el = document.getElementById('d21-text');
+el.textContent = 'DOM updated!';
+el.style.color = '#e11d48';
+el.style.fontWeight = '700';</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 22 -->
+    <section class="exercise" id="d22">
+      <h2><span class="num">22</span> Manipulating DOM Object</h2>
+      <p class="prompt">Tạo và xóa phần tử động trong container.</p>
+      <div class="demo">
+        <button id="d22-add">Add item</button>
+        <button id="d22-clear">Clear all</button>
+        <div id="d22-list"></div>
+      </div>
+      <button class="solve" data-target="d22-sol">Xem lời giải</button>
+      <div class="solution" id="d22-sol">
+        <h3>Solution</h3>
+        <pre><code>const li = document.createElement('div');
+li.textContent = 'Item ' + (list.children.length + 1);
+list.appendChild(li);
+list.innerHTML = '';</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 23 -->
+    <section class="exercise" id="d23">
+      <h2><span class="num">23</span> Event Listeners</h2>
+      <p class="prompt">Lắng nghe click / input / keydown và cập nhật UI.</p>
+      <div class="demo">
+        <input type="text" id="d23-input" placeholder="Type here..." />
+        <button id="d23-btn">Click me</button>
+        <div class="output" id="d23-out">Events will appear here</div>
+      </div>
+      <button class="solve" data-target="d23-sol">Xem lời giải</button>
+      <div class="solution" id="d23-sol">
+        <h3>Solution</h3>
+        <pre><code>input.addEventListener('input', (e) =&gt; {
+  out.textContent = 'input: ' + e.target.value;
+});
+btn.addEventListener('click', () =&gt; {
+  out.textContent = 'button clicked';
+});
+input.addEventListener('keydown', (e) =&gt; {
+  out.textContent = 'keydown: ' + e.key;
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 24 -->
+    <section class="exercise" id="d24">
+      <h2><span class="num">24</span> Mini Project: Solar System</h2>
+      <p class="prompt">Chọn hành tinh và cân nặng (kg) → tính khối lượng trên hành tinh đó.</p>
+      <div class="demo">
+        <label>Mass (kg): <input type="number" id="d24-mass" value="70" style="width:80px" /></label>
+        <label>Planet:
+          <select id="d24-planet">
+            <option value="1">Earth (1)</option>
+            <option value="0.38">Mercury (0.38)</option>
+            <option value="0.91">Venus (0.91)</option>
+            <option value="0.38">Mars (0.38)</option>
+            <option value="2.34">Jupiter (2.34)</option>
+            <option value="1.06">Saturn (1.06)</option>
+            <option value="0.92">Uranus (0.92)</option>
+            <option value="1.19">Neptune (1.19)</option>
+            <option value="0.06">Moon (0.06)</option>
+          </select>
+        </label>
+        <button id="d24-btn">Calculate weight</button>
+        <div class="output" id="d24-out"></div>
+      </div>
+      <button class="solve" data-target="d24-sol">Xem lời giải</button>
+      <div class="solution" id="d24-sol">
+        <h3>Solution</h3>
+        <pre><code>const mass = Number(document.getElementById('d24-mass').value);
+const gravity = Number(document.getElementById('d24-planet').value);
+const weight = mass * gravity;</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 25 -->
+    <section class="exercise" id="d25">
+      <h2><span class="num">25</span> Mini Project: Countries Viz 1</h2>
+      <p class="prompt">Hiển thị top N quốc gia theo dân số (dataset mẫu nhỏ).</p>
+      <div class="demo">
+        <label>Top N: <input type="number" id="d25-n" value="5" min="1" max="15" style="width:60px" /></label>
+        <button id="d25-btn">Show top countries</button>
+        <div id="d25-chart"></div>
+      </div>
+      <button class="solve" data-target="d25-sol">Xem lời giải</button>
+      <div class="solution" id="d25-sol">
+        <h3>Solution</h3>
+        <pre><code>const top = COUNTRIES
+  .slice()
+  .sort((a, b) =&gt; b.population - a.population)
+  .slice(0, n);
+// render bars proportional to max population</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 26 -->
+    <section class="exercise" id="d26">
+      <h2><span class="num">26</span> Mini Project: Countries Viz 2</h2>
+      <p class="prompt">Lọc quốc gia theo chữ cái bắt đầu.</p>
+      <div class="demo">
+        <label>Starts with: <input type="text" id="d26-q" value="V" maxlength="3" style="width:60px" /></label>
+        <button id="d26-btn">Filter</button>
+        <div class="output" id="d26-out"></div>
+      </div>
+      <button class="solve" data-target="d26-sol">Xem lời giải</button>
+      <div class="solution" id="d26-sol">
+        <h3>Solution</h3>
+        <pre><code>const q = document.getElementById('d26-q').value.toLowerCase();
+const hits = COUNTRIES.filter((c) =&gt;
+  c.name.toLowerCase().startsWith(q)
+);</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 27 -->
+    <section class="exercise" id="d27">
+      <h2><span class="num">27</span> Mini Project: Portfolio</h2>
+      <p class="prompt">Toggle section About và highlight skill tags.</p>
+      <div class="demo">
+        <button id="d27-toggle">Toggle About</button>
+        <div id="d27-about" style="display:none;margin:8px 0;padding:8px;background:#f1f5f9;border-radius:8px">
+          Frontend learner following 30 Days of JavaScript.
+        </div>
+        <div>
+          <span class="skill" data-skill>HTML</span>
+          <span class="skill" data-skill>CSS</span>
+          <span class="skill" data-skill>JavaScript</span>
+          <span class="skill" data-skill>DOM</span>
+        </div>
+      </div>
+      <button class="solve" data-target="d27-sol">Xem lời giải</button>
+      <div class="solution" id="d27-sol">
+        <h3>Solution</h3>
+        <pre><code>about.style.display = about.style.display === 'none' ? 'block' : 'none';
+skill.addEventListener('click', () =&gt; skill.classList.toggle('on'));</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 28 -->
+    <section class="exercise" id="d28">
+      <h2><span class="num">28</span> Mini Project: Leaderboard</h2>
+      <p class="prompt">Thêm người chơi + điểm, sắp xếp bảng xếp hạng.</p>
+      <div class="demo">
+        <label>Name: <input type="text" id="d28-name" value="Alex" /></label>
+        <label>Score: <input type="number" id="d28-score" value="120" style="width:80px" /></label>
+        <button id="d28-btn">Add &amp; sort</button>
+        <table>
+          <thead><tr><th>#</th><th>Name</th><th>Score</th></tr></thead>
+          <tbody id="d28-body"></tbody>
+        </table>
+      </div>
+      <button class="solve" data-target="d28-sol">Xem lời giải</button>
+      <div class="solution" id="d28-sol">
+        <h3>Solution</h3>
+        <pre><code>players.push({ name, score });
+players.sort((a, b) =&gt; b.score - a.score);
+// re-render table rows</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 29 -->
+    <section class="exercise" id="d29">
+      <h2><span class="num">29</span> Mini Project: Animating Characters</h2>
+      <p class="prompt">Bấm để animate / đổi màu chuỗi ký tự.</p>
+      <div class="demo">
+        <div class="anim-text" id="d29-text">JAVASCRIPT</div>
+        <button id="d29-btn">Animate</button>
+      </div>
+      <button class="solve" data-target="d29-sol">Xem lời giải</button>
+      <div class="solution" id="d29-sol">
+        <h3>Solution</h3>
+        <pre><code>text.classList.add('pulse');
+setTimeout(() =&gt; text.classList.remove('pulse'), 400);</code></pre>
+      </div>
+    </section>
+
+    <!-- Day 30 -->
+    <section class="exercise" id="d30">
+      <h2><span class="num">30</span> Final Projects</h2>
+      <p class="prompt">Random project idea + checklist hoàn thành khóa học.</p>
+      <div class="demo">
+        <button id="d30-idea">Random project idea</button>
+        <div class="output" id="d30-out"></div>
+        <label><input type="checkbox" id="d30-c1" /> Finished Days 1–15</label><br />
+        <label><input type="checkbox" id="d30-c2" /> Finished Days 16–23</label><br />
+        <label><input type="checkbox" id="d30-c3" /> Built one mini project</label>
+        <div class="output" id="d30-progress" style="margin-top:8px"></div>
+      </div>
+      <button class="solve" data-target="d30-sol">Xem lời giải</button>
+      <div class="solution" id="d30-sol">
+        <h3>Solution</h3>
+        <pre><code>const ideas = ['Todo app', 'Weather UI', 'Quiz game', 'Kanban board'];
+const pick = ideas[Math.floor(Math.random() * ideas.length)];
+const done = [c1, c2, c3].filter((c) =&gt; c.checked).length;</code></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site">
+    Curriculum credit:
+    <a href="https://github.com/Asabeneh/30-Days-Of-JavaScript" target="_blank" rel="noopener">
+      Asabeneh/30-Days-Of-JavaScript</a>.
+    Interactive practice page — single local HTML file.
+  </footer>
+
+  <script>
+    const COUNTRIES = [
+      { name: 'China', population: 1444216107 },
+      { name: 'India', population: 1393409038 },
+      { name: 'United States', population: 332915073 },
+      { name: 'Indonesia', population: 276361783 },
+      { name: 'Pakistan', population: 225199937 },
+      { name: 'Brazil', population: 213993437 },
+      { name: 'Nigeria', population: 211400708 },
+      { name: 'Bangladesh', population: 166303498 },
+      { name: 'Russia', population: 145912025 },
+      { name: 'Mexico', population: 130262216 },
+      { name: 'Japan', population: 126050804 },
+      { name: 'Ethiopia', population: 120812698 },
+      { name: 'Philippines', population: 111046910 },
+      { name: 'Egypt', population: 104258327 },
+      { name: 'Vietnam', population: 98168849 },
+    ];
+
+    document.querySelectorAll('button.solve').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const panel = document.getElementById(btn.dataset.target);
+        const open = panel.classList.toggle('open');
+        btn.textContent = open ? 'Ẩn lời giải' : 'Xem lời giải';
+      });
+    });
+
+    // Day 01
+    document.getElementById('d01-btn').addEventListener('click', () => {
+      const firstName = 'Asabeneh';
+      const year = 2020;
+      const sum = 2 + 3;
+      document.getElementById('d01-out').textContent =
+        `Name: ${firstName}\n2 + 3 = ${sum}\ntypeof year: ${typeof year}`;
+    });
+
+    // Day 02
+    document.getElementById('d02-btn').addEventListener('click', () => {
+      const raw = document.getElementById('d02-val').value;
+      const asNum = Number(raw);
+      document.getElementById('d02-out').textContent =
+        `raw typeof: ${typeof raw}\nNumber(raw): ${asNum} (${typeof asNum})\n` +
+        `Number.isNaN: ${Number.isNaN(asNum)}\nBoolean(''): ${Boolean('')}\n` +
+        `Boolean('hi'): ${Boolean('hi')}`;
+    });
+
+    // Day 03
+    document.getElementById('d03-btn').addEventListener('click', () => {
+      const a = Number(document.getElementById('d03-a').value);
+      const b = Number(document.getElementById('d03-b').value);
+      const now = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const stamp =
+        `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ` +
+        `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+      document.getElementById('d03-out').textContent =
+        `a > b: ${a > b}\na === b: ${a === b}\na + b: ${a + b}\nNow: ${stamp}`;
+    });
+
+    // Day 04
+    document.getElementById('d04-btn').addEventListener('click', () => {
+      const score = Number(document.getElementById('d04-score').value);
+      let grade;
+      if (score >= 90) grade = 'A';
+      else if (score >= 80) grade = 'B';
+      else if (score >= 70) grade = 'C';
+      else if (score >= 60) grade = 'D';
+      else grade = 'F';
+      document.getElementById('d04-out').textContent = `Score ${score} → Grade ${grade}`;
+    });
+
+    // Day 05
+    (() => {
+      let countries = ['Finland', 'Sweden', 'Norway', 'Denmark'];
+      const out = document.getElementById('d05-out');
+      const render = (note) => {
+        out.textContent = `${note}\n[${countries.join(', ')}]`;
+      };
+      render('Initial');
+      document.getElementById('d05-push').addEventListener('click', () => {
+        countries.push(document.getElementById('d05-item').value || 'Unknown');
+        render('After push');
+      });
+      document.getElementById('d05-pop').addEventListener('click', () => {
+        countries.pop();
+        render('After pop');
+      });
+      document.getElementById('d05-slice').addEventListener('click', () => {
+        out.textContent =
+          `slice(0, 3): [${countries.slice(0, 3).join(', ')}]\n` +
+          `original: [${countries.join(', ')}]`;
+      });
+    })();
+
+    // Day 06
+    document.getElementById('d06-btn').addEventListener('click', () => {
+      const n = Number(document.getElementById('d06-n').value) || 0;
+      let sum = 0;
+      const seq = [];
+      for (let i = 1; i <= n; i++) {
+        seq.push(i);
+        sum += i;
+      }
+      document.getElementById('d06-out').textContent =
+        `Sequence: ${seq.join(', ')}\nSum: ${sum}`;
+    });
+
+    // Day 07
+    document.getElementById('d07-btn').addEventListener('click', () => {
+      const weight = Number(document.getElementById('d07-w').value);
+      const height = Number(document.getElementById('d07-h').value);
+      if (!height) {
+        document.getElementById('d07-out').textContent = 'Height must be > 0';
+        return;
+      }
+      const bmi = weight / (height * height);
+      document.getElementById('d07-out').textContent = `BMI: ${bmi.toFixed(2)}`;
+    });
+
+    // Day 08
+    document.getElementById('d08-btn').addEventListener('click', () => {
+      const person = {
+        name: document.getElementById('d08-name').value,
+        age: Number(document.getElementById('d08-age').value),
+        country: 'VN',
+      };
+      person.age += 1;
+      document.getElementById('d08-out').textContent =
+        `${JSON.stringify(person, null, 2)}\nkeys: ${Object.keys(person).join(', ')}`;
+    });
+
+    // Day 09
+    document.getElementById('d09-btn').addEventListener('click', () => {
+      const nums = [1, 2, 3, 4, 5, 6];
+      document.getElementById('d09-out').textContent =
+        `map *2: [${nums.map((n) => n * 2).join(', ')}]\n` +
+        `filter even: [${nums.filter((n) => n % 2 === 0).join(', ')}]\n` +
+        `reduce sum: ${nums.reduce((acc, n) => acc + n, 0)}`;
+    });
+
+    // Day 10
+    document.getElementById('d10-btn').addEventListener('click', () => {
+      const unique = [...new Set(['a', 'b', 'a', 'c', 'b'])];
+      const capitals = new Map([
+        ['Finland', 'Helsinki'],
+        ['Sweden', 'Stockholm'],
+        ['Vietnam', 'Hanoi'],
+      ]);
+      const key = document.getElementById('d10-key').value;
+      document.getElementById('d10-out').textContent =
+        `Set unique: [${unique.join(', ')}]\n` +
+        `Map.get('${key}'): ${capitals.get(key) ?? '(not found)'}`;
+    });
+
+    // Day 11
+    document.getElementById('d11-btn').addEventListener('click', () => {
+      const user = { name: 'Alex', age: 25, city: 'Hanoi' };
+      const { name, city } = user;
+      const [first, ...rest] = [10, 20, 30, 40];
+      const merged = { ...user, city: 'Da Nang' };
+      document.getElementById('d11-out').textContent =
+        `name=${name}, city=${city}\n` +
+        `first=${first}, rest=[${rest.join(', ')}]\n` +
+        `merged: ${JSON.stringify(merged)}`;
+    });
+
+    // Day 12
+    document.getElementById('d12-btn').addEventListener('click', () => {
+      const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const email = document.getElementById('d12-email').value;
+      document.getElementById('d12-out').textContent =
+        pattern.test(email) ? `Valid: ${email}` : `Invalid: ${email}`;
+    });
+
+    // Day 13
+    document.getElementById('d13-btn').addEventListener('click', () => {
+      const rows = [
+        { name: 'Alex', age: 25 },
+        { name: 'Sam', age: 30 },
+      ];
+      console.table(rows);
+      console.group('People');
+      rows.forEach((r) => console.log(r.name));
+      console.groupEnd();
+      document.getElementById('d13-out').textContent =
+        'console.table + console.group called.\n' +
+        rows.map((r) => `${r.name} (${r.age})`).join('\n');
+    });
+
+    // Day 14
+    document.getElementById('d14-btn').addEventListener('click', () => {
+      const out = document.getElementById('d14-out');
+      try {
+        const data = JSON.parse(document.getElementById('d14-json').value);
+        out.textContent = 'Parsed OK:\n' + JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.textContent = 'Error: ' + err.message;
+      }
+    });
+
+    // Day 15
+    document.getElementById('d15-btn').addEventListener('click', () => {
+      class Person {
+        constructor(name, age) {
+          this.name = name;
+          this.age = age;
+        }
+        getInfo() {
+          return `${this.name} is ${this.age} years old.`;
+        }
+      }
+      const p = new Person(
+        document.getElementById('d15-name').value,
+        Number(document.getElementById('d15-age').value)
+      );
+      document.getElementById('d15-out').textContent = p.getInfo();
+    });
+
+    // Day 16
+    document.getElementById('d16-btn').addEventListener('click', () => {
+      const obj = { skills: ['JS', 'HTML', 'CSS'], level: 'beginner' };
+      const str = JSON.stringify(obj, null, 2);
+      const back = JSON.parse(str);
+      document.getElementById('d16-out').textContent =
+        `stringify:\n${str}\n\nparsed.skills: ${back.skills.join(', ')}`;
+    });
+
+    // Day 17
+    (() => {
+      const KEY = 'd17-note';
+      const out = document.getElementById('d17-out');
+      document.getElementById('d17-save').addEventListener('click', () => {
+        localStorage.setItem(KEY, document.getElementById('d17-note').value);
+        out.textContent = 'Saved to localStorage.';
+      });
+      document.getElementById('d17-load').addEventListener('click', () => {
+        out.textContent = 'Loaded: ' + (localStorage.getItem(KEY) ?? '(empty)');
+      });
+      document.getElementById('d17-clear').addEventListener('click', () => {
+        localStorage.removeItem(KEY);
+        out.textContent = 'Cleared.';
+      });
+    })();
+
+    // Day 18
+    document.getElementById('d18-btn').addEventListener('click', async () => {
+      const out = document.getElementById('d18-out');
+      out.textContent = 'Loading...';
+      const fakeFetch = () =>
+        new Promise((resolve) => {
+          setTimeout(() => resolve({ message: 'Hello from Promise' }), 800);
+        });
+      try {
+        const data = await fakeFetch();
+        out.textContent = JSON.stringify(data);
+      } catch (err) {
+        out.textContent = 'Failed: ' + err.message;
+      }
+    });
+
+    // Day 19
+    (() => {
+      function createCounter() {
+        let count = 0;
+        return {
+          inc() { return ++count; },
+          dec() { return --count; },
+          reset() { count = 0; return count; },
+        };
+      }
+      const counter = createCounter();
+      const out = document.getElementById('d19-out');
+      document.getElementById('d19-inc').addEventListener('click', () => {
+        out.textContent = String(counter.inc());
+      });
+      document.getElementById('d19-dec').addEventListener('click', () => {
+        out.textContent = String(counter.dec());
+      });
+      document.getElementById('d19-reset').addEventListener('click', () => {
+        out.textContent = String(counter.reset());
+      });
+    })();
+
+    // Day 20
+    document.getElementById('d20-btn').addEventListener('click', () => {
+      const price = Number(document.getElementById('d20-price').value);
+      function t(p) { return p * 1.1; }
+      const TAX_RATE = 0.1;
+      function calculatePriceWithTax(p) { return p * (1 + TAX_RATE); }
+      document.getElementById('d20-out').textContent =
+        `bad t(price): ${t(price).toFixed(2)}\n` +
+        `clean calculatePriceWithTax: ${calculatePriceWithTax(price).toFixed(2)}`;
+    });
+
+    // Day 21
+    document.getElementById('d21-btn').addEventListener('click', () => {
+      const el = document.getElementById('d21-text');
+      el.textContent = 'DOM updated!';
+      el.style.color = '#e11d48';
+      el.style.fontWeight = '700';
+    });
+
+    // Day 22
+    (() => {
+      const list = document.getElementById('d22-list');
+      document.getElementById('d22-add').addEventListener('click', () => {
+        const item = document.createElement('div');
+        item.textContent = 'Item ' + (list.children.length + 1);
+        list.appendChild(item);
+      });
+      document.getElementById('d22-clear').addEventListener('click', () => {
+        list.innerHTML = '';
+      });
+    })();
+
+    // Day 23
+    (() => {
+      const input = document.getElementById('d23-input');
+      const out = document.getElementById('d23-out');
+      input.addEventListener('input', (e) => {
+        out.textContent = 'input: ' + e.target.value;
+      });
+      document.getElementById('d23-btn').addEventListener('click', () => {
+        out.textContent = 'button clicked';
+      });
+      input.addEventListener('keydown', (e) => {
+        out.textContent = 'keydown: ' + e.key;
+      });
+    })();
+
+    // Day 24
+    document.getElementById('d24-btn').addEventListener('click', () => {
+      const mass = Number(document.getElementById('d24-mass').value);
+      const select = document.getElementById('d24-planet');
+      const gravity = Number(select.value);
+      const label = select.options[select.selectedIndex].text;
+      const weight = mass * gravity;
+      document.getElementById('d24-out').textContent =
+        `On ${label}: ${weight.toFixed(2)} N (mass × gravity)`;
+    });
+
+    // Day 25
+    document.getElementById('d25-btn').addEventListener('click', () => {
+      const n = Math.min(
+        Math.max(Number(document.getElementById('d25-n').value) || 5, 1),
+        COUNTRIES.length
+      );
+      const top = COUNTRIES.slice()
+        .sort((a, b) => b.population - a.population)
+        .slice(0, n);
+      const max = top[0].population;
+      const chart = document.getElementById('d25-chart');
+      chart.innerHTML = '';
+      top.forEach((c) => {
+        const row = document.createElement('div');
+        row.style.marginBottom = '6px';
+        const label = document.createElement('div');
+        label.style.fontSize = '0.8rem';
+        label.textContent = `${c.name} — ${c.population.toLocaleString()}`;
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.width = `${(c.population / max) * 100}%`;
+        row.appendChild(label);
+        row.appendChild(bar);
+        chart.appendChild(row);
+      });
+    });
+
+    // Day 26
+    document.getElementById('d26-btn').addEventListener('click', () => {
+      const q = document.getElementById('d26-q').value.toLowerCase();
+      const hits = COUNTRIES.filter((c) => c.name.toLowerCase().startsWith(q));
+      document.getElementById('d26-out').textContent = hits.length
+        ? hits.map((c) => c.name).join('\n')
+        : '(no matches)';
+    });
+
+    // Day 27
+    (() => {
+      const about = document.getElementById('d27-about');
+      document.getElementById('d27-toggle').addEventListener('click', () => {
+        about.style.display = about.style.display === 'none' ? 'block' : 'none';
+      });
+      document.querySelectorAll('#d27 [data-skill]').forEach((skill) => {
+        skill.addEventListener('click', () => skill.classList.toggle('on'));
+      });
+    })();
+
+    // Day 28
+    (() => {
+      const players = [
+        { name: 'Sam', score: 90 },
+        { name: 'Lee', score: 140 },
+      ];
+      const body = document.getElementById('d28-body');
+      function render() {
+        players.sort((a, b) => b.score - a.score);
+        body.innerHTML = '';
+        players.forEach((p, i) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${i + 1}</td><td>${p.name}</td><td>${p.score}</td>`;
+          body.appendChild(tr);
+        });
+      }
+      render();
+      document.getElementById('d28-btn').addEventListener('click', () => {
+        players.push({
+          name: document.getElementById('d28-name').value || 'Anon',
+          score: Number(document.getElementById('d28-score').value) || 0,
+        });
+        render();
+      });
+    })();
+
+    // Day 29
+    document.getElementById('d29-btn').addEventListener('click', () => {
+      const text = document.getElementById('d29-text');
+      text.classList.add('pulse');
+      setTimeout(() => text.classList.remove('pulse'), 400);
+    });
+
+    // Day 30
+    (() => {
+      const ideas = [
+        'Todo app with localStorage',
+        'Weather UI (mock data)',
+        'Quiz game',
+        'Kanban board',
+        'Expense tracker',
+        'Markdown previewer',
+      ];
+      document.getElementById('d30-idea').addEventListener('click', () => {
+        const pick = ideas[Math.floor(Math.random() * ideas.length)];
+        document.getElementById('d30-out').textContent = 'Idea: ' + pick;
+      });
+      const updateProgress = () => {
+        const boxes = [
+          document.getElementById('d30-c1'),
+          document.getElementById('d30-c2'),
+          document.getElementById('d30-c3'),
+        ];
+        const done = boxes.filter((c) => c.checked).length;
+        document.getElementById('d30-progress').textContent =
+          `Progress: ${done}/3 checklist items`;
+      };
+      ['d30-c1', 'd30-c2', 'd30-c3'].forEach((id) => {
+        document.getElementById(id).addEventListener('change', updateProgress);
+      });
+      updateProgress();
+    })();
+
+    // Google Translate on demand
+    function googleTranslateElementInit() {
+      /* global google */
+      new google.translate.TranslateElement(
+        { pageLanguage: 'en', includedLanguages: 'en,vi', autoDisplay: false },
+        'google_translate_element'
+      );
+    }
+    window.googleTranslateElementInit = googleTranslateElementInit;
+
+    (() => {
+      const script = document.createElement('script');
+      script.src =
+        'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      document.head.appendChild(script);
+    })();
+
+    function setTranslateLanguage(lang, attempt = 0) {
+      const combo = document.querySelector('.goog-te-combo');
+      if (combo) {
+        combo.value = lang;
+        combo.dispatchEvent(new Event('change'));
+        return;
+      }
+      if (attempt < 30) {
+        setTimeout(() => setTranslateLanguage(lang, attempt + 1), 300);
+      } else {
+        alert('Không tải được Google Translate. Kiểm tra kết nối mạng.');
+      }
+    }
+
+    document.getElementById('btnTranslateVi')
+      .addEventListener('click', () => setTranslateLanguage('vi'));
+    document.getElementById('btnTranslateEn')
+      .addEventListener('click', () => setTranslateLanguage('en'));
+  </script>
+</body>
+</html>
