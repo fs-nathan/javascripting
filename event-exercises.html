@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JavaScript Event Handling Exercises — Interactive Practice</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-2: #273549;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #22c55e;
+      --border: #334155;
+      --code-bg: #0b1120;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    header.site {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header.site h1 { margin: 0; font-size: 1.15rem; font-weight: 700; }
+    header.site .sub { color: var(--muted); font-size: 0.85rem; }
+    .translate-bar { display: flex; align-items: center; gap: 8px; }
+    .container { max-width: 960px; margin: 0 auto; padding: 24px 16px 80px; }
+    .intro {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .intro a { color: var(--accent); }
+    .toc {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 8px;
+      margin-bottom: 26px;
+    }
+    .toc a {
+      color: var(--text);
+      text-decoration: none;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+    }
+    .toc a:hover { border-color: var(--accent); }
+    .exercise {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 22px;
+      margin-bottom: 22px;
+      scroll-margin-top: 90px;
+    }
+    .exercise h2 {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .exercise h2 .num {
+      color: var(--bg);
+      background: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+    }
+    .prompt { color: var(--muted); margin: 0 0 14px; }
+    .demo {
+      background: #fff;
+      color: #1e293b;
+      border-radius: 10px;
+      padding: 16px;
+      margin: 12px 0;
+      border: 1px solid #cbd5e1;
+    }
+    .demo :is(button, input[type="button"], input[type="submit"]) { cursor: pointer; }
+    .demo .output {
+      margin-top: 10px;
+      padding: 8px 10px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      min-height: 1.2em;
+      white-space: pre-wrap;
+      color: #0f172a;
+      font-family: 'SF Mono', Consolas, monospace;
+    }
+    .demo .error { color: var(--danger); font-size: 0.88rem; margin-top: 6px; }
+    .demo label { font-size: 0.9rem; margin-right: 8px; }
+    .demo input[type="text"],
+    .demo input[type="email"],
+    .demo textarea {
+      padding: 5px 8px;
+      border: 1px solid #94a3b8;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      margin: 4px 0;
+    }
+    .demo button, .demo .btn {
+      background: #0ea5e9;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-weight: 600;
+      margin: 2px 4px 2px 0;
+    }
+    .dropdown-wrap { position: relative; display: inline-block; }
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 110%;
+      background: #fff;
+      border: 1px solid #94a3b8;
+      border-radius: 8px;
+      min-width: 160px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      z-index: 5;
+    }
+    .dropdown-menu.open { display: block; }
+    .dropdown-menu button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      color: #1e293b;
+      border: none;
+      border-radius: 0;
+      padding: 8px 12px;
+    }
+    .dropdown-menu button:hover { background: #e2e8f0; }
+    .hover-box {
+      padding: 24px;
+      border-radius: 8px;
+      background: #e2e8f0;
+      text-align: center;
+      transition: background 0.2s;
+    }
+    .slide-img {
+      max-width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #e2e8f0;
+    }
+    .dnd-list {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0 0;
+    }
+    .dnd-list li {
+      padding: 10px 12px;
+      margin: 6px 0;
+      background: #e2e8f0;
+      border-radius: 8px;
+      cursor: grab;
+      border: 1px dashed transparent;
+    }
+    .dnd-list li.dragging { opacity: 0.5; }
+    .dnd-list li.over { border-color: #0ea5e9; }
+    .switch {
+      width: 52px;
+      height: 28px;
+      border-radius: 999px;
+      background: #94a3b8;
+      position: relative;
+      cursor: pointer;
+      display: inline-block;
+      vertical-align: middle;
+      transition: background 0.2s;
+    }
+    .switch.on { background: #22c55e; }
+    .switch::after {
+      content: '';
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #fff;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.2s;
+    }
+    .switch.on::after { transform: translateX(24px); }
+    .progress-track {
+      height: 16px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #0ea5e9;
+      transition: width 0.2s;
+    }
+    .bubble-parent {
+      padding: 16px;
+      background: #dbeafe;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+    .bubble-child {
+      padding: 12px;
+      background: #fef3c7;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+    .capture-parent {
+      padding: 16px;
+      background: #dcfce7;
+      border-radius: 8px;
+    }
+    .capture-child {
+      padding: 12px;
+      background: #fce7f3;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+    button, .btn {
+      background: var(--accent);
+      color: #06263a;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover, .btn:hover { filter: brightness(1.08); }
+    button.ghost {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+    button.solve {
+      background: transparent;
+      color: var(--accent-2);
+      border: 1px solid var(--accent-2);
+      margin-top: 6px;
+    }
+    .solution { margin-top: 12px; display: none; }
+    .solution.open { display: block; }
+    .solution h3 {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin: 0 0 6px;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      margin: 0;
+    }
+    code { font-family: 'SF Mono', 'Fira Code', Consolas, monospace; font-size: 0.82rem; }
+    footer.site {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+      padding: 24px;
+      border-top: 1px solid var(--border);
+    }
+    footer.site a { color: var(--accent); }
+    #google_translate_element { display: none; }
+    .goog-te-banner-frame { display: none !important; }
+    body { top: 0 !important; }
+  </style>
+</head>
+<body>
+  <header class="site">
+    <div>
+      <h1 class="notranslate">JavaScript Event Handling</h1>
+      <div class="sub">21 bài Event + Browser API — demo chạy trực tiếp + lời giải</div>
+    </div>
+    <div class="translate-bar">
+      <div id="google_translate_element"></div>
+      <button id="btnTranslateVi" class="btn">Dịch sang Tiếng Việt</button>
+      <button id="btnTranslateEn" class="ghost">English</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="intro">
+      Bộ bài tập tương tác dựa theo
+      <a href="https://www.w3resource.com/javascript-exercises/event/"
+         target="_blank" rel="noopener">w3resource — JavaScript Event Handling</a>
+      (21 bài chính). Mỗi bài: đề ngắn, demo chạy được, nút <em>Xem lời giải</em>.
+      Mở qua localhost hoặc trực tiếp file HTML.
+    </div>
+
+    <nav class="toc" aria-label="Exercises">
+      <a href="#ev01">01. Button Click</a>
+      <a href="#ev02">02. Dropdown Toggle</a>
+      <a href="#ev03">03. Mouse Enter</a>
+      <a href="#ev04">04. Form Validation</a>
+      <a href="#ev05">05. Slideshow</a>
+      <a href="#ev06">06. Drag and Drop</a>
+      <a href="#ev07">07. Toggle Switch</a>
+      <a href="#ev08">08. Progress Bar</a>
+      <a href="#ev09">09. Enter Key</a>
+      <a href="#ev10">10. Double Click</a>
+      <a href="#ev11">11. Event Delegation</a>
+      <a href="#ev12">12. Prevent Default</a>
+      <a href="#ev13">13. Stop Propagation</a>
+      <a href="#ev14">14. Event Capturing</a>
+      <a href="#ev15">15. Debounce Input</a>
+      <a href="#ev16">16. LocalStorage Counter</a>
+      <a href="#ev17">17. SessionStorage Cart</a>
+      <a href="#ev18">18. Fetch API</a>
+      <a href="#ev19">19. Geolocation</a>
+      <a href="#ev20">20. Clipboard Copy</a>
+      <a href="#ev21">21. Notifications</a>
+    </nav>
+
+    <!-- 01 -->
+    <section class="exercise" id="ev01">
+      <h2><span class="num">01</span> Button Click Event</h2>
+      <p class="prompt">Thêm click listener cho nút và hiện message khi bấm.</p>
+      <div class="demo">
+        <button id="ev01-btn">Click me</button>
+        <div class="output" id="ev01-out"></div>
+      </div>
+      <button class="solve" data-target="ev01-sol">Xem lời giải</button>
+      <div class="solution" id="ev01-sol">
+        <h3>Solution</h3>
+        <pre><code>document.getElementById('ev01-btn').addEventListener('click', () =&gt; {
+  document.getElementById('ev01-out').textContent = 'Button was clicked!';
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section class="exercise" id="ev02">
+      <h2><span class="num">02</span> Dropdown Menu Toggle</h2>
+      <p class="prompt">Click nút để show/hide menu options.</p>
+      <div class="demo">
+        <div class="dropdown-wrap">
+          <button id="ev02-btn">Menu ▾</button>
+          <div class="dropdown-menu" id="ev02-menu">
+            <button type="button">Profile</button>
+            <button type="button">Settings</button>
+            <button type="button">Logout</button>
+          </div>
+        </div>
+        <div class="output" id="ev02-out">Menu closed</div>
+      </div>
+      <button class="solve" data-target="ev02-sol">Xem lời giải</button>
+      <div class="solution" id="ev02-sol">
+        <h3>Solution</h3>
+        <pre><code>btn.addEventListener('click', () =&gt; {
+  menu.classList.toggle('open');
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section class="exercise" id="ev03">
+      <h2><span class="num">03</span> Mouse Enter Background Change</h2>
+      <p class="prompt">Đổi màu nền khi chuột vào / ra khỏi phần tử.</p>
+      <div class="demo">
+        <div class="hover-box" id="ev03-box">Hover over me</div>
+      </div>
+      <button class="solve" data-target="ev03-sol">Xem lời giải</button>
+      <div class="solution" id="ev03-sol">
+        <h3>Solution</h3>
+        <pre><code>box.addEventListener('mouseenter', () =&gt; {
+  box.style.background = '#fde047';
+});
+box.addEventListener('mouseleave', () =&gt; {
+  box.style.background = '#e2e8f0';
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 04 -->
+    <section class="exercise" id="ev04">
+      <h2><span class="num">04</span> Form Validation with Error Message</h2>
+      <p class="prompt">Submit form trống → hiện lỗi; điền đủ → OK.</p>
+      <div class="demo">
+        <form id="ev04-form">
+          <label>Name: <input type="text" id="ev04-name" /></label><br />
+          <label>Email: <input type="email" id="ev04-email" /></label><br />
+          <button type="submit">Submit</button>
+        </form>
+        <div class="error" id="ev04-err"></div>
+        <div class="output" id="ev04-out"></div>
+      </div>
+      <button class="solve" data-target="ev04-sol">Xem lời giải</button>
+      <div class="solution" id="ev04-sol">
+        <h3>Solution</h3>
+        <pre><code>form.addEventListener('submit', (e) =&gt; {
+  e.preventDefault();
+  if (!name.value.trim() || !email.value.trim()) {
+    err.textContent = 'All fields are required.';
+    return;
+  }
+  err.textContent = '';
+  out.textContent = 'Form OK';
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section class="exercise" id="ev05">
+      <h2><span class="num">05</span> Image Slideshow Navigation</h2>
+      <p class="prompt">Prev / Next đổi ảnh trong slideshow.</p>
+      <div class="demo">
+        <img id="ev05-img" class="slide-img" alt="Slide" width="320" height="160" />
+        <div>
+          <button id="ev05-prev">Previous</button>
+          <button id="ev05-next">Next</button>
+        </div>
+        <div class="output" id="ev05-out"></div>
+      </div>
+      <button class="solve" data-target="ev05-sol">Xem lời giải</button>
+      <div class="solution" id="ev05-sol">
+        <h3>Solution</h3>
+        <pre><code>let index = 0;
+function show(i) {
+  index = (i + slides.length) % slides.length;
+  img.src = slides[index];
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- 06 -->
+    <section class="exercise" id="ev06">
+      <h2><span class="num">06</span> Drag-and-Drop List Reordering</h2>
+      <p class="prompt">Kéo thả để sắp xếp lại các mục trong list.</p>
+      <div class="demo">
+        <ul class="dnd-list" id="ev06-list">
+          <li draggable="true">Alpha</li>
+          <li draggable="true">Bravo</li>
+          <li draggable="true">Charlie</li>
+          <li draggable="true">Delta</li>
+        </ul>
+        <div class="output" id="ev06-out">Drag items to reorder</div>
+      </div>
+      <button class="solve" data-target="ev06-sol">Xem lời giải</button>
+      <div class="solution" id="ev06-sol">
+        <h3>Solution</h3>
+        <pre><code>list.addEventListener('dragstart', (e) =&gt; {
+  e.target.classList.add('dragging');
+});
+list.addEventListener('dragover', (e) =&gt; {
+  e.preventDefault();
+  const after = getDragAfterElement(list, e.clientY);
+  const dragging = list.querySelector('.dragging');
+  if (!after) list.appendChild(dragging);
+  else list.insertBefore(dragging, after);
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 07 -->
+    <section class="exercise" id="ev07">
+      <h2><span class="num">07</span> Toggle Switch Implementation</h2>
+      <p class="prompt">Click switch để đổi trạng thái on/off.</p>
+      <div class="demo">
+        <span class="switch" id="ev07-switch" role="switch" aria-checked="false"></span>
+        <span id="ev07-label"> Off</span>
+        <div class="output" id="ev07-out">State: off</div>
+      </div>
+      <button class="solve" data-target="ev07-sol">Xem lời giải</button>
+      <div class="solution" id="ev07-sol">
+        <h3>Solution</h3>
+        <pre><code>sw.addEventListener('click', () =&gt; {
+  const on = sw.classList.toggle('on');
+  sw.setAttribute('aria-checked', String(on));
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 08 -->
+    <section class="exercise" id="ev08">
+      <h2><span class="num">08</span> Progress Bar Update</h2>
+      <p class="prompt">Cập nhật width progress theo % hoàn thành.</p>
+      <div class="demo">
+        <button id="ev08-inc">+10%</button>
+        <button id="ev08-reset">Reset</button>
+        <div class="progress-track"><div class="progress-fill" id="ev08-bar"></div></div>
+        <div class="output" id="ev08-out">0%</div>
+      </div>
+      <button class="solve" data-target="ev08-sol">Xem lời giải</button>
+      <div class="solution" id="ev08-sol">
+        <h3>Solution</h3>
+        <pre><code>progress = Math.min(progress + 10, 100);
+bar.style.width = progress + '%';</code></pre>
+      </div>
+    </section>
+
+    <!-- 09 -->
+    <section class="exercise" id="ev09">
+      <h2><span class="num">09</span> Enter Key Detection in Input</h2>
+      <p class="prompt">Phát hiện phím Enter trong ô nhập.</p>
+      <div class="demo">
+        <input type="text" id="ev09-input" placeholder="Type and press Enter" style="width:70%" />
+        <div class="output" id="ev09-out"></div>
+      </div>
+      <button class="solve" data-target="ev09-sol">Xem lời giải</button>
+      <div class="solution" id="ev09-sol">
+        <h3>Solution</h3>
+        <pre><code>input.addEventListener('keydown', (e) =&gt; {
+  if (e.key === 'Enter') {
+    out.textContent = 'Enter pressed: ' + input.value;
+  }
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="exercise" id="ev10">
+      <h2><span class="num">10</span> Double-Click Event Action</h2>
+      <p class="prompt">Double-click phần tử để đổi text/style.</p>
+      <div class="demo">
+        <p id="ev10-text" style="padding:12px;background:#e2e8f0;border-radius:8px;cursor:pointer">
+          Double-click me
+        </p>
+      </div>
+      <button class="solve" data-target="ev10-sol">Xem lời giải</button>
+      <div class="solution" id="ev10-sol">
+        <h3>Solution</h3>
+        <pre><code>el.addEventListener('dblclick', () =&gt; {
+  el.textContent = 'Double-clicked!';
+  el.style.background = '#bbf7d0';
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section class="exercise" id="ev11">
+      <h2><span class="num">11</span> Event Delegation on List Items</h2>
+      <p class="prompt">Một listener trên parent bắt click item động.</p>
+      <div class="demo">
+        <button id="ev11-add">Add item</button>
+        <ul id="ev11-list" style="margin:8px 0;padding-left:20px">
+          <li data-id="1">Item 1</li>
+          <li data-id="2">Item 2</li>
+        </ul>
+        <div class="output" id="ev11-out">Click an item</div>
+      </div>
+      <button class="solve" data-target="ev11-sol">Xem lời giải</button>
+      <div class="solution" id="ev11-sol">
+        <h3>Solution</h3>
+        <pre><code>list.addEventListener('click', (e) =&gt; {
+  const li = e.target.closest('li');
+  if (!li || !list.contains(li)) return;
+  out.textContent = 'Clicked: ' + li.textContent;
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section class="exercise" id="ev12">
+      <h2><span class="num">12</span> Prevent Default Behavior</h2>
+      <p class="prompt"><code>preventDefault</code> khi submit; hiện giá trị input thay vì reload.</p>
+      <div class="demo">
+        <form id="ev12-form">
+          <label>Message: <input type="text" id="ev12-msg" value="Hello" /></label>
+          <button type="submit">Submit</button>
+        </form>
+        <div class="output" id="ev12-out"></div>
+      </div>
+      <button class="solve" data-target="ev12-sol">Xem lời giải</button>
+      <div class="solution" id="ev12-sol">
+        <h3>Solution</h3>
+        <pre><code>form.addEventListener('submit', (e) =&gt; {
+  e.preventDefault();
+  out.textContent = 'Value: ' + msg.value;
+});</code></pre>
+      </div>
+    </section>
+
+    <!-- 13 -->
+    <section class="exercise" id="ev13">
+      <h2><span class="num">13</span> Stop Propagation Example</h2>
+      <p class="prompt">Demo bubbling; nút child gọi <code>stopPropagation</code>.</p>
+      <div class="demo">
+        <div class="bubble-parent" id="ev13-parent">
+          Parent (click me)
+          <div class="bubble-child" id="ev13-child">
+            Child — stopPropagation
+          </div>
+        </div>
+        <label>
+          <input type="checkbox" id="ev13-stop" checked />
+          stopPropagation on child
+        </label>
+        <div class="output" id="ev13-out"></div>
+      </div>
+      <button class="solve" data-target="ev13-sol">Xem lời giải</button>
+      <div class="solution" id="ev13-sol">
+        <h3>Solution</h3>
+        <pre><code>child.addEventListener('click', (e) =&gt; {
+  if (stop.checked) e.stopPropagation();
+  log('child');
+});
+parent.addEventListener('click', () =&gt; log('parent'));</code></pre>
+      </div>
+    </section>
+
+    <!-- 14 -->
+    <section class="exercise" id="ev14">
+      <h2><span class="num">14</span> Event Capturing Example</h2>
+      <p class="prompt">Listener capture trên parent chạy trước child.</p>
+      <div class="demo">
+        <div class="capture-parent" id="ev14-parent">
+          Parent (capture)
+          <div class="capture-child" id="ev14-child">Child (bubble)</div>
+        </div>
+        <div class="output" id="ev14-out">Click child — order appears here</div>
+      </div>
+      <button class="solve" data-target="ev14-sol">Xem lời giải</button>
+      <div class="solution" id="ev14-sol">
+        <h3>Solution</h3>
+        <pre><code>parent.addEventListener('click', () =&gt; log('parent capture'), true);
+child.addEventListener('click', () =&gt; log('child bubble'));</code></pre>
+      </div>
+    </section>
+
+    <!-- 15 -->
+    <section class="exercise" id="ev15">
+      <h2><span class="num">15</span> Debounce Input Event</h2>
+      <p class="prompt">Debounce input 400ms trước khi “gọi API” giả.</p>
+      <div class="demo">
+        <input type="text" id="ev15-input" placeholder="Type quickly..." style="width:70%" />
+        <div class="output" id="ev15-out">Waiting...</div>
+      </div>
+      <button class="solve" data-target="ev15-sol">Xem lời giải</button>
+      <div class="solution" id="ev15-sol">
+        <h3>Solution</h3>
+        <pre><code>function debounce(fn, ms) {
+  let t;
+  return (...args) =&gt; {
+    clearTimeout(t);
+    t = setTimeout(() =&gt; fn(...args), ms);
+  };
+}
+input.addEventListener('input', debounce((e) =&gt; {
+  out.textContent = 'API call: ' + e.target.value;
+}, 400));</code></pre>
+      </div>
+    </section>
+
+    <!-- 16 -->
+    <section class="exercise" id="ev16">
+      <h2><span class="num">16</span> LocalStorage Counter</h2>
+      <p class="prompt">Counter lưu bằng localStorage — giữ sau khi reload.</p>
+      <div class="demo">
+        <button id="ev16-inc">+1</button>
+        <button id="ev16-reset">Reset</button>
+        <div class="output" id="ev16-out">0</div>
+      </div>
+      <button class="solve" data-target="ev16-sol">Xem lời giải</button>
+      <div class="solution" id="ev16-sol">
+        <h3>Solution</h3>
+        <pre><code>let count = Number(localStorage.getItem('ev16-count') || 0);
+localStorage.setItem('ev16-count', String(count));</code></pre>
+      </div>
+    </section>
+
+    <!-- 17 -->
+    <section class="exercise" id="ev17">
+      <h2><span class="num">17</span> SessionStorage Cart</h2>
+      <p class="prompt">Giỏ hàng lưu trong sessionStorage (mất khi đóng tab).</p>
+      <div class="demo">
+        <button data-item="Apple">Add Apple</button>
+        <button data-item="Banana">Add Banana</button>
+        <button data-item="Orange">Add Orange</button>
+        <button id="ev17-clear">Clear cart</button>
+        <div class="output" id="ev17-out"></div>
+      </div>
+      <button class="solve" data-target="ev17-sol">Xem lời giải</button>
+      <div class="solution" id="ev17-sol">
+        <h3>Solution</h3>
+        <pre><code>const cart = JSON.parse(sessionStorage.getItem('ev17-cart') || '[]');
+cart.push(item);
+sessionStorage.setItem('ev17-cart', JSON.stringify(cart));</code></pre>
+      </div>
+    </section>
+
+    <!-- 18 -->
+    <section class="exercise" id="ev18">
+      <h2><span class="num">18</span> Fetch API with Error Handling</h2>
+      <p class="prompt">Fetch JSON; bắt lỗi mạng / HTTP và hiện kết quả.</p>
+      <div class="demo">
+        <button id="ev18-ok">Fetch post #1</button>
+        <button id="ev18-fail">Fetch bad URL</button>
+        <div class="output" id="ev18-out">Idle</div>
+      </div>
+      <button class="solve" data-target="ev18-sol">Xem lời giải</button>
+      <div class="solution" id="ev18-sol">
+        <h3>Solution</h3>
+        <pre><code>try {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const data = await res.json();
+} catch (err) {
+  out.textContent = 'Error: ' + err.message;
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- 19 -->
+    <section class="exercise" id="ev19">
+      <h2><span class="num">19</span> Geolocation API Example</h2>
+      <p class="prompt">Hiện vị trí hiện tại (cần permission trình duyệt).</p>
+      <div class="demo">
+        <button id="ev19-btn">Get location</button>
+        <div class="output" id="ev19-out"></div>
+      </div>
+      <button class="solve" data-target="ev19-sol">Xem lời giải</button>
+      <div class="solution" id="ev19-sol">
+        <h3>Solution</h3>
+        <pre><code>navigator.geolocation.getCurrentPosition(
+  (pos) =&gt; {
+    out.textContent = `lat: ${pos.coords.latitude}, lng: ${pos.coords.longitude}`;
+  },
+  (err) =&gt; { out.textContent = 'Denied: ' + err.message; }
+);</code></pre>
+      </div>
+    </section>
+
+    <!-- 20 -->
+    <section class="exercise" id="ev20">
+      <h2><span class="num">20</span> Clipboard API for Copy</h2>
+      <p class="prompt">Copy nội dung text box vào clipboard.</p>
+      <div class="demo">
+        <input type="text" id="ev20-text" value="Copy this text" style="width:60%" />
+        <button id="ev20-btn">Copy</button>
+        <div class="output" id="ev20-out"></div>
+      </div>
+      <button class="solve" data-target="ev20-sol">Xem lời giải</button>
+      <div class="solution" id="ev20-sol">
+        <h3>Solution</h3>
+        <pre><code>await navigator.clipboard.writeText(input.value);
+out.textContent = 'Copied!';</code></pre>
+      </div>
+    </section>
+
+    <!-- 21 -->
+    <section class="exercise" id="ev21">
+      <h2><span class="num">21</span> Web Notifications API</h2>
+      <p class="prompt">Xin quyền rồi gửi desktop notification.</p>
+      <div class="demo">
+        <button id="ev21-btn">Notify me</button>
+        <div class="output" id="ev21-out"></div>
+      </div>
+      <button class="solve" data-target="ev21-sol">Xem lời giải</button>
+      <div class="solution" id="ev21-sol">
+        <h3>Solution</h3>
+        <pre><code>let perm = Notification.permission;
+if (perm !== 'granted') perm = await Notification.requestPermission();
+if (perm === 'granted') {
+  new Notification('Event Exercises', { body: 'Hello from the demo!' });
+}</code></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site">
+    Exercises inspired by
+    <a href="https://www.w3resource.com/javascript-exercises/event/"
+       target="_blank" rel="noopener">w3resource Event Handling</a>.
+    Single local HTML file.
+  </footer>
+
+  <script>
+    document.querySelectorAll('button.solve').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const panel = document.getElementById(btn.dataset.target);
+        const open = panel.classList.toggle('open');
+        btn.textContent = open ? 'Ẩn lời giải' : 'Xem lời giải';
+      });
+    });
+
+    // 01 Click
+    document.getElementById('ev01-btn').addEventListener('click', () => {
+      document.getElementById('ev01-out').textContent = 'Button was clicked!';
+    });
+
+    // 02 Dropdown
+    (() => {
+      const btn = document.getElementById('ev02-btn');
+      const menu = document.getElementById('ev02-menu');
+      const out = document.getElementById('ev02-out');
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = menu.classList.toggle('open');
+        out.textContent = open ? 'Menu open' : 'Menu closed';
+      });
+      document.addEventListener('click', () => {
+        if (menu.classList.contains('open')) {
+          menu.classList.remove('open');
+          out.textContent = 'Menu closed';
+        }
+      });
+      menu.querySelectorAll('button').forEach((item) => {
+        item.addEventListener('click', () => {
+          out.textContent = 'Selected: ' + item.textContent;
+          menu.classList.remove('open');
+        });
+      });
+    })();
+
+    // 03 Mouse enter
+    (() => {
+      const box = document.getElementById('ev03-box');
+      box.addEventListener('mouseenter', () => {
+        box.style.background = '#fde047';
+        box.textContent = 'Mouse entered';
+      });
+      box.addEventListener('mouseleave', () => {
+        box.style.background = '#e2e8f0';
+        box.textContent = 'Hover over me';
+      });
+    })();
+
+    // 04 Form validation
+    document.getElementById('ev04-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('ev04-name').value.trim();
+      const email = document.getElementById('ev04-email').value.trim();
+      const err = document.getElementById('ev04-err');
+      const out = document.getElementById('ev04-out');
+      if (!name || !email) {
+        err.textContent = 'All fields are required.';
+        out.textContent = '';
+        return;
+      }
+      err.textContent = '';
+      out.textContent = `OK — ${name} <${email}>`;
+    });
+
+    // 05 Slideshow
+    (() => {
+      const slides = [
+        'https://picsum.photos/id/1015/320/160',
+        'https://picsum.photos/id/1025/320/160',
+        'https://picsum.photos/id/1035/320/160',
+      ];
+      let index = 0;
+      const img = document.getElementById('ev05-img');
+      const out = document.getElementById('ev05-out');
+      function show(i) {
+        index = (i + slides.length) % slides.length;
+        img.src = slides[index];
+        out.textContent = `Slide ${index + 1} / ${slides.length}`;
+      }
+      show(0);
+      document.getElementById('ev05-prev').addEventListener('click', () => show(index - 1));
+      document.getElementById('ev05-next').addEventListener('click', () => show(index + 1));
+    })();
+
+    // 06 Drag and drop
+    (() => {
+      const list = document.getElementById('ev06-list');
+      const out = document.getElementById('ev06-out');
+      let dragging = null;
+
+      function orderText() {
+        return [...list.children].map((li) => li.textContent).join(' → ');
+      }
+
+      list.querySelectorAll('li').forEach((li) => {
+        li.addEventListener('dragstart', () => {
+          dragging = li;
+          li.classList.add('dragging');
+        });
+        li.addEventListener('dragend', () => {
+          li.classList.remove('dragging');
+          dragging = null;
+          out.textContent = 'Order: ' + orderText();
+        });
+      });
+
+      list.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const after = getDragAfterElement(list, e.clientY);
+        if (!dragging) return;
+        if (!after) list.appendChild(dragging);
+        else list.insertBefore(dragging, after);
+      });
+
+      function getDragAfterElement(container, y) {
+        const els = [...container.querySelectorAll('li:not(.dragging)')];
+        return els.reduce((closest, child) => {
+          const box = child.getBoundingClientRect();
+          const offset = y - box.top - box.height / 2;
+          if (offset < 0 && offset > closest.offset) {
+            return { offset, element: child };
+          }
+          return closest;
+        }, { offset: Number.NEGATIVE_INFINITY, element: null }).element;
+      }
+    })();
+
+    // 07 Toggle switch
+    (() => {
+      const sw = document.getElementById('ev07-switch');
+      const label = document.getElementById('ev07-label');
+      const out = document.getElementById('ev07-out');
+      sw.addEventListener('click', () => {
+        const on = sw.classList.toggle('on');
+        sw.setAttribute('aria-checked', String(on));
+        label.textContent = on ? ' On' : ' Off';
+        out.textContent = 'State: ' + (on ? 'on' : 'off');
+      });
+    })();
+
+    // 08 Progress
+    (() => {
+      let progress = 0;
+      const bar = document.getElementById('ev08-bar');
+      const out = document.getElementById('ev08-out');
+      function render() {
+        bar.style.width = progress + '%';
+        out.textContent = progress + '%';
+      }
+      document.getElementById('ev08-inc').addEventListener('click', () => {
+        progress = Math.min(progress + 10, 100);
+        render();
+      });
+      document.getElementById('ev08-reset').addEventListener('click', () => {
+        progress = 0;
+        render();
+      });
+    })();
+
+    // 09 Enter key
+    document.getElementById('ev09-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('ev09-out').textContent =
+          'Enter pressed: ' + e.target.value;
+      }
+    });
+
+    // 10 Double click
+    document.getElementById('ev10-text').addEventListener('dblclick', (e) => {
+      e.target.textContent = 'Double-clicked!';
+      e.target.style.background = '#bbf7d0';
+    });
+
+    // 11 Delegation
+    (() => {
+      const list = document.getElementById('ev11-list');
+      const out = document.getElementById('ev11-out');
+      let n = 2;
+      list.addEventListener('click', (e) => {
+        const li = e.target.closest('li');
+        if (!li || !list.contains(li)) return;
+        out.textContent = 'Clicked: ' + li.textContent;
+      });
+      document.getElementById('ev11-add').addEventListener('click', () => {
+        n += 1;
+        const li = document.createElement('li');
+        li.dataset.id = String(n);
+        li.textContent = 'Item ' + n;
+        list.appendChild(li);
+      });
+    })();
+
+    // 12 Prevent default
+    document.getElementById('ev12-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      document.getElementById('ev12-out').textContent =
+        'Value: ' + document.getElementById('ev12-msg').value;
+    });
+
+    // 13 Stop propagation
+    (() => {
+      const out = document.getElementById('ev13-out');
+      const stop = document.getElementById('ev13-stop');
+      const log = (who) => {
+        out.textContent += (out.textContent ? ' → ' : '') + who;
+      };
+      document.getElementById('ev13-parent').addEventListener('click', () => {
+        log('parent');
+      });
+      document.getElementById('ev13-child').addEventListener('click', (e) => {
+        out.textContent = '';
+        if (stop.checked) e.stopPropagation();
+        log('child');
+      });
+    })();
+
+    // 14 Capturing
+    (() => {
+      const out = document.getElementById('ev14-out');
+      const order = [];
+      const flush = () => {
+        out.textContent = 'Order: ' + order.join(' → ');
+        order.length = 0;
+      };
+      document.getElementById('ev14-parent').addEventListener(
+        'click',
+        () => { order.push('parent capture'); },
+        true
+      );
+      document.getElementById('ev14-child').addEventListener('click', () => {
+        order.push('child bubble');
+        flush();
+      });
+    })();
+
+    // 15 Debounce
+    (() => {
+      function debounce(fn, ms) {
+        let t;
+        return (...args) => {
+          clearTimeout(t);
+          t = setTimeout(() => fn(...args), ms);
+        };
+      }
+      const out = document.getElementById('ev15-out');
+      document.getElementById('ev15-input').addEventListener(
+        'input',
+        debounce((e) => {
+          out.textContent = 'API call: ' + e.target.value;
+        }, 400)
+      );
+    })();
+
+    // 16 LocalStorage counter
+    (() => {
+      const KEY = 'ev16-count';
+      const out = document.getElementById('ev16-out');
+      let count = Number(localStorage.getItem(KEY) || 0);
+      const render = () => { out.textContent = String(count); };
+      render();
+      document.getElementById('ev16-inc').addEventListener('click', () => {
+        count += 1;
+        localStorage.setItem(KEY, String(count));
+        render();
+      });
+      document.getElementById('ev16-reset').addEventListener('click', () => {
+        count = 0;
+        localStorage.setItem(KEY, '0');
+        render();
+      });
+    })();
+
+    // 17 SessionStorage cart
+    (() => {
+      const KEY = 'ev17-cart';
+      const out = document.getElementById('ev17-out');
+      function getCart() {
+        try {
+          return JSON.parse(sessionStorage.getItem(KEY) || '[]');
+        } catch {
+          return [];
+        }
+      }
+      function render() {
+        const cart = getCart();
+        out.textContent = cart.length
+          ? 'Cart: ' + cart.join(', ')
+          : 'Cart empty';
+      }
+      render();
+      document.querySelectorAll('#ev17 [data-item]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const cart = getCart();
+          cart.push(btn.dataset.item);
+          sessionStorage.setItem(KEY, JSON.stringify(cart));
+          render();
+        });
+      });
+      document.getElementById('ev17-clear').addEventListener('click', () => {
+        sessionStorage.removeItem(KEY);
+        render();
+      });
+    })();
+
+    // 18 Fetch
+    (() => {
+      const out = document.getElementById('ev18-out');
+      async function load(url) {
+        out.textContent = 'Loading...';
+        try {
+          const res = await fetch(url);
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const data = await res.json();
+          out.textContent = JSON.stringify(data, null, 2).slice(0, 400);
+        } catch (err) {
+          out.textContent = 'Error: ' + err.message;
+        }
+      }
+      document.getElementById('ev18-ok').addEventListener('click', () => {
+        load('https://jsonplaceholder.typicode.com/posts/1');
+      });
+      document.getElementById('ev18-fail').addEventListener('click', () => {
+        load('https://jsonplaceholder.typicode.com/this-will-404');
+      });
+    })();
+
+    // 19 Geolocation
+    document.getElementById('ev19-btn').addEventListener('click', () => {
+      const out = document.getElementById('ev19-out');
+      if (!navigator.geolocation) {
+        out.textContent = 'Geolocation not supported.';
+        return;
+      }
+      out.textContent = 'Requesting permission...';
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          out.textContent =
+            `lat: ${pos.coords.latitude.toFixed(5)}, ` +
+            `lng: ${pos.coords.longitude.toFixed(5)}`;
+        },
+        (err) => {
+          out.textContent = 'Denied / error: ' + err.message;
+        }
+      );
+    });
+
+    // 20 Clipboard
+    document.getElementById('ev20-btn').addEventListener('click', async () => {
+      const out = document.getElementById('ev20-out');
+      const text = document.getElementById('ev20-text').value;
+      try {
+        await navigator.clipboard.writeText(text);
+        out.textContent = 'Copied!';
+      } catch (err) {
+        out.textContent = 'Clipboard failed: ' + err.message;
+      }
+    });
+
+    // 21 Notifications
+    document.getElementById('ev21-btn').addEventListener('click', async () => {
+      const out = document.getElementById('ev21-out');
+      if (!('Notification' in window)) {
+        out.textContent = 'Notifications not supported.';
+        return;
+      }
+      let perm = Notification.permission;
+      if (perm !== 'granted') {
+        perm = await Notification.requestPermission();
+      }
+      if (perm === 'granted') {
+        new Notification('Event Exercises', { body: 'Hello from the demo!' });
+        out.textContent = 'Notification sent (check OS tray).';
+      } else {
+        out.textContent = 'Permission: ' + perm;
+      }
+    });
+
+    // Google Translate
+    function googleTranslateElementInit() {
+      /* global google */
+      new google.translate.TranslateElement(
+        { pageLanguage: 'en', includedLanguages: 'en,vi', autoDisplay: false },
+        'google_translate_element'
+      );
+    }
+    window.googleTranslateElementInit = googleTranslateElementInit;
+
+    (() => {
+      const script = document.createElement('script');
+      script.src =
+        'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      document.head.appendChild(script);
+    })();
+
+    function setTranslateLanguage(lang, attempt = 0) {
+      const combo = document.querySelector('.goog-te-combo');
+      if (combo) {
+        combo.value = lang;
+        combo.dispatchEvent(new Event('change'));
+        return;
+      }
+      if (attempt < 30) {
+        setTimeout(() => setTranslateLanguage(lang, attempt + 1), 300);
+      } else {
+        alert('Không tải được Google Translate. Kiểm tra kết nối mạng.');
+      }
+    }
+
+    document.getElementById('btnTranslateVi')
+      .addEventListener('click', () => setTranslateLanguage('vi'));
+    document.getElementById('btnTranslateEn')
+      .addEventListener('click', () => setTranslateLanguage('en'));
+  </script>
+</body>
+</html>

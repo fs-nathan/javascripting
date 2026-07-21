@@ -1,50 +1,41 @@
-# TODO: 30 Days of JavaScript Exercises
+# TODO: JavaScript Event Handling Exercises
 
 ## Phase 1: Foundation
-- [x] Task 1.1: HTML shell + CSS (theo pattern dom-exercises)
+- [x] Task 1.1: HTML shell + CSS
 - [x] Task 1.2: Header + Google Translate VI/EN
-- [x] Task 1.3: Intro + TOC Day 01–30 + solution toggle helper
+- [x] Task 1.3: Intro + TOC 01–21 + solution toggle
 
 ## Checkpoint: Foundation Complete
 
-## Phase 2: Days 01–15
-- [x] Task 2.01: Day 01 Introduction
-- [x] Task 2.02: Day 02 Data Types
-- [x] Task 2.03: Day 03 Booleans / Operators / Date
-- [x] Task 2.04: Day 04 Conditionals
-- [x] Task 2.05: Day 05 Arrays
-- [x] Task 2.06: Day 06 Loops
-- [x] Task 2.07: Day 07 Functions
-- [x] Task 2.08: Day 08 Objects
-- [x] Task 2.09: Day 09 Higher Order Functions
-- [x] Task 2.10: Day 10 Sets and Maps
-- [x] Task 2.11: Day 11 Destructuring & Spreading
-- [x] Task 2.12: Day 12 Regular Expressions
-- [x] Task 2.13: Day 13 Console Object Methods
-- [x] Task 2.14: Day 14 Error Handling
-- [x] Task 2.15: Day 15 Classes
+## Phase 2: Event Handling 01–15
+- [x] Task 2.01: Button Click Event
+- [x] Task 2.02: Dropdown Menu Toggle
+- [x] Task 2.03: Mouse Enter Background Change
+- [x] Task 2.04: Form Validation with Error Message
+- [x] Task 2.05: Image Slideshow Navigation
+- [x] Task 2.06: Drag-and-Drop List Reordering
+- [x] Task 2.07: Toggle Switch Implementation
+- [x] Task 2.08: Progress Bar Update
+- [x] Task 2.09: Enter Key Detection in Input
+- [x] Task 2.10: Double-Click Event Action
+- [x] Task 2.11: Event Delegation on List Items
+- [x] Task 2.12: Prevent Default Behavior
+- [x] Task 2.13: Stop Propagation Example
+- [x] Task 2.14: Event Capturing Example
+- [x] Task 2.15: Debounce Input Event
 
-## Checkpoint: Fundamentals Complete
+## Checkpoint: Events Complete
 
-## Phase 3: Days 16–30
-- [x] Task 3.16: Day 16 JSON
-- [x] Task 3.17: Day 17 Web Storages
-- [x] Task 3.18: Day 18 Promises
-- [x] Task 3.19: Day 19 Closures
-- [x] Task 3.20: Day 20 Writing Clean Code
-- [x] Task 3.21: Day 21 DOM
-- [x] Task 3.22: Day 22 Manipulating DOM
-- [x] Task 3.23: Day 23 Event Listeners
-- [x] Task 3.24: Day 24 Solar System weight
-- [x] Task 3.25: Day 25 Countries viz (top N)
-- [x] Task 3.26: Day 26 Countries filter
-- [x] Task 3.27: Day 27 Portfolio toggle
-- [x] Task 3.28: Day 28 Leaderboard
-- [x] Task 3.29: Day 29 Animating characters
-- [x] Task 3.30: Day 30 Final project ideas
+## Phase 3: Browser API 16–21
+- [x] Task 3.16: LocalStorage Counter
+- [x] Task 3.17: SessionStorage Cart
+- [x] Task 3.18: Fetch API with Error Handling
+- [x] Task 3.19: Geolocation API Example
+- [x] Task 3.20: Clipboard API for Copy
+- [x] Task 3.21: Web Notifications API
 
 ## Checkpoint: Core Complete
 
 ## Phase 4: Polish
 - [x] Task 4.1: Smoke-test localhost
-- [x] Task 4.2: Commit
+- [x] Task 4.2: Commit + push main
