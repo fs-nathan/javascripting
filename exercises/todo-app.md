@@ -1,19 +1,19 @@
 # Vanilla JavaScript Todo App — Complete Coding Exercise
 
-> **Level:** Beginner → Intermediate
-> **Technology:** HTML5 + CSS3 + Vanilla JavaScript
-> **Framework:** None
-> **Build Tool:** None
-> **Backend:** None
-> **Database:** None
-> **Storage:** Browser LocalStorage
-> **Goal:** Xây dựng một ứng dụng Todo List hoàn chỉnh bằng JavaScript thuần.
+* **Level:** Beginner → Intermediate
+* **Technology:** HTML5 + CSS3 + Vanilla JavaScript
+* **Framework:** None
+* **Build Tool:** None
+* **Backend:** None
+* **Database:** None
+* **Storage:** Browser LocalStorage
+* **Goal:** Xây dựng một ứng dụng Todo List hoàn chỉnh bằng JavaScript thuần.
 
 ---
 
 # 1. Tổng quan bài tập
 
-Trong bài tập này, bạn sẽ xây dựng một ứng dụng **Todo List** cho phép người dùng quản lý danh sách công việc cá nhân.
+Trong bài tập này, bạn sẽ xây dựng một ứng dụng **Todo List** cho phép người dùng quản lý danh sách công việc cá nhân. [Tham khảo](https://simple-todo-list.vercel.app)
 
 Ứng dụng cần hỗ trợ:
 
