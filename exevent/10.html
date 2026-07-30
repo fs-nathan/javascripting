@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="desc">Double-click me</div>
+    <script>
+        const p = document.querySelector("#desc")
+        p.addEventListener('dblclick', function(){
+            p.style.backgroundColor = "green"
+            p.textContent = "da db click"
+        })
+    </script>
+</body>
+</html>

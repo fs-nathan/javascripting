@@ -1,0 +1,9 @@
+#parent{
+    width: 500px;
+    background: green;
+
+}
+#child{
+    width: 200px;
+    background-color: cyan;
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 14: Event Capturing Example</title>
+    <style>
+        /* Khung bao ngoài */
+        .container {
+            background-color: #1e293b;
+            color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            font-family: sans-serif;
+        }
+        
+        /* Giao diện nút cha (Màu xanh lá nhạt) */
+        #parent {
+            background-color: #dcfce7;
+            color: #14532d;
+            padding: 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Giao diện nút con (Màu hồng nhạt) */
+        #child {
+            background-color: #fce7f3;
+            color: #4c051e;
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        /* Thanh hiển thị chuỗi kết quả ở bên dưới */
+        #result-box {
+            margin-top: 15px;
+            background-color: #f1f5f9;
+            color: #0f172a;
+            padding: 12px;
+            border-radius: 6px;
+            min-height: 20px;
+            font-family: monospace;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3>Bài 14: Event Capturing Example</h3>
+    <p>Listener capture trên parent chạy trước child.</p>
+
+    <!-- Khối cha (Parent capture) -->
+    <div id="parent">
+        Parent (capture)
+        <!-- Khối con (Child bubble) -->
+        <div id="child">
+            Child (bubble)
+        </div>
+    </div>
+
+    <!-- Thanh kết quả bên dưới giống ảnh mẫu -->
+    <div id="result-box">Order: </div>
+</div>
+
+<script>
+    const parent = document.getElementById('parent');
+    const child = document.getElementById('child');
+    const resultBox = document.getElementById('result-box');
+
+    // Mảng lưu lịch sử các sự kiện được kích hoạt
+    let orderLogs = [];
+
+    // Hàm in kết quả ra màn hình giao diện
+    function log(text) {
+        orderLogs.push(text);
+        resultBox.textContent = 'Order: ' + orderLogs.join(' -> ');
+    }
+
+    // 1. Lắng nghe sự kiện click ở khối CHA với tham số true (Capturing)
+    parent.addEventListener('click', () => {
+        log('parent capture');
+    }, true); // Bắt buộc phải có `true` ở đây để kích hoạt chế độ capture trước
+
+    // 2. Lắng nghe sự kiện click ở khối CON (Bubbling mặc định)
+    child.addEventListener('click', () => {
+        log('child bubble');
+    });
+</script>
+
+</body>
+</html>

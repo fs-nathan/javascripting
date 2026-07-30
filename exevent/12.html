@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" id="form">
+        <label for="" id="label">Message</label>
+        <input type="text" id="input">
+        <button id="btn">Submit</button>
+    </form>
+    <p id="form-out">Value: </p>
+    <script>
+        const item1 = document.getElementById("form")
+        const item2 = document.getElementById("input")
+        const item3 = document.getElementById("form-out")
+        item1.addEventListener('submit', function(e){
+            e.preventDefault();
+            item3.textContent = "Value: " + item2.value;
+        })
+    </script>
+</body>
+</html>

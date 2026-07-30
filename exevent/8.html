@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài 8 - Progress Bar</title>
+</head>
+<body>
+    <button id="btn-add">+10%</button>
+    <button id="btn-reset">Reset</button>
+    <div class="progress-container">
+        <div id="my-bar" class="progress-bar"></div>
+    </div>
+    <p id="text-percent">0%</p>
+
+    <script>
+        const btnAdd = document.getElementById('btn-add');
+        const btnReset = document.getElementById('btn-reset');
+        const myBar = document.getElementById('my-bar');
+        const textPercent = document.getElementById('text-percent');
+
+        let progress = 0;
+
+        btnAdd.addEventListener('click', () => {
+            progress = Math.min(progress + 10, 100)
+            myBar.style.width = progress + '%';
+            textPercent.textContent = progress + '%';
+        });
+        btnReset.addEventListener('click', () => {
+            progress = 0;
+            myBar.style.width = progress + '%';
+            textPercent.textContent = progress + '%';
+        });
+    </script>
+
+</body>
+</html>

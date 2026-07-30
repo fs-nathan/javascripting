@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<body>
+    <!-- b3 -->
+    <!-- <p id="p1-text">This paragraph will get a background color.</p>
+    <button id="btn-set">Set background Color</button> -->
+    <!-- b1 -->
+    <!-- <p id="p2-text">JavaScript Exercises - w3resource</p>
+    <button id="b2-text">Style</button> -->
+
+
+    <!-- b2 -->
+     <form id="form_in">
+        <div>
+            <label for="">First Name:</label>
+            <input type="text" name="fName">
+        </div>
+        <div>
+            <label for="">Last Name:</label>
+            <input type="text" name="lName">
+        </div>
+        <button id="btn_submit" type="button">Submit</button>
+     </form>
+     <div id="form_out">
+        
+     </div>
+
+    <script>
+        // const getp1 = document.getElementById('p1-text')
+        // const btnSet = document.getElementById('btn-set').addEventListener('click', ()=>{
+        //     getp1.style.backgroundColor = '#fde047'
+        // const getp2 = document.getElementById('p2-text')
+        // const btn2Set = document.getElementById('b2-text').addEventListener('click', () => {
+        //     getp2.style.color = 'red'
+        // })
+        // })
+
+        const form = document.getElementById('form_in')
+        console.log(form.elements)
+        const submit = document.getElementById('btn_submit').addEventListener('click', (e) => {
+            console.log(submit)
+            const fName = form.elements['fName'].value;
+            const lName = form.elements['lName'].value;
+            document.getElementById('form_out').textContent = `First Name: ${fName} \n Last Name: ${lName}`
+            
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="box-03">Hover over me</div>
+    <script>
+        const item1 = document.getElementById("box-03")
+        item1.addEventListener('mouseenter', () => {
+            item1.style.backgroundColor = "yellow"
+            item1.textContent = "Di chuot vao"
+        })
+        item1.addEventListener('mouseleave', () => {
+            item1.style.backgroundColor = "red"
+            item1.textContent = "Di chuot ra"
+        })
+    </script>
+</body>
+</html>

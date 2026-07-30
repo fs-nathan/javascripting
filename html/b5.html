@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table id="sampleTable" border = "1">
+        <tr >
+            <td>Row1 cell1</td>
+            <td>Row2 cell2</td>
+        </tr>
+        <tr >
+            <td>Row1 cell1</td>
+            <td>Row2 cell2</td>
+        </tr>
+        <tr >
+            <td>Row1 cell1</td>
+            <td>Row2 cell2</td>
+        </tr>
+        
+    </table>
+    <button id="btn-ex5">Insert row</button>
+    <script>
+        document.getElementById('btn-ex5').addEventListener('click', () => {
+            const table = document.getElementById('sampleTable')
+            // dem so hang cot
+            const rowCount = table.rows.length
+            const row = table.insertRow(rowCount);
+            const c1 = row.insertCell(0)
+            const c2 = row.insertCell(1)
+            c1.textContent = `Row${rowCount + 1} cell1`;
+            c2.textContent = `Row${rowCount + 1} cell2`;
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <a id="ex4-link" type="text/html" hreflang="en-us" rel="nofollow" target="_self" href="https://www.w3resource.com/">w3resource</a>
+    <button id="btn-ex4">Get attributes</button>
+    <div id="ex4-out" style="white-space: pre-line;">
+
+    </div>
+    <script>
+        document.getElementById('btn-ex4').addEventListener('click', () => {
+            const link = document.getElementById("ex4-link");
+            const out = document.getElementById("ex4-out");
+
+            let text = "";
+
+            for (const attr of link.attributes) {
+                text += `${attr.name}: ${attr.value}\n`;
+            }
+
+            out.textContent = text;
+            }) ;
+    </script>
+</body>
+</html>

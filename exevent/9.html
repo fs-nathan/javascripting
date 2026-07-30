@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>b9</title>
+</head>
+<body>
+
+    <input type="text" id="my-input" placeholder="Type and press Enter">
+    
+
+    <p id="out-text"></p>
+
+    <script>
+        const input = document.getElementById('my-input');
+        const out = document.getElementById('out-text');
+
+        input.addEventListener('keydown', (e) => {
+            
+            if (e.key === 'Enter') {
+                out.textContent = 'Enter pressed: ' + input.value;
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" id="form-04">
+        <div id="name">
+            <label for="input-name">Name</label>
+            <!-- SỬA TẠI ĐÂY: Thêm id="input-name" vào thẻ input -->
+            <input type="text" id="input-name">
+        </div>
+        <div id="mail">
+            <label for="input-mail">Mail</label>
+            <!-- SỬA TẠI ĐÂY: Thêm id="input-mail" vào thẻ input -->
+            <input type="text" id="input-mail">
+        </div>
+        <button id="btn-04">Submit</button>
+        <p id="er-04"></p>
+        <div id="form-out"></div>
+    </form>
+
+    <script>
+        const item1 = document.getElementById("form-04")
+        const inputName = document.getElementById("input-name")
+        const inputMail = document.getElementById("input-mail")
+        
+        const btn = document.getElementById("btn-04")
+        const erMassage = document.getElementById("er-04")
+        const item2 = document.getElementById("form-out")
+
+        item1.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if (!inputName.value.trim() || !inputMail.value.trim()) {
+                erMassage.style.color = "red";
+                erMassage.textContent = "All fields are required.";
+                item2.textContent = "";
+            } 
+            else {
+                erMassage.textContent = "";
+                item2.textContent = `Name: ${inputName.value} - Email: ${inputMail.value}`;
+            }
+        })
+    </script>
+</body>
+</html>

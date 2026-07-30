@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <script>
+        function onChildClick(event) {
+            console.log('event: ============', event)
+            document.getElementById('ev11-out').textContent = `You clicked on: ${event.target.textContent}`;
+        }
+
+        function onAddItem() {
+            const currentItems = document.getElementById('ev11-list').querySelectorAll('li');
+            const newItem = document.createElement('li');
+            const data_id = currentItems.length + 1;
+            newItem.setAttribute('data-id', data_id);
+            newItem.textContent = `Item ${data_id}`;
+            newItem.addEventListener('click', onChildClick);
+            document.getElementById('ev11-list').appendChild(newItem);
+        }
+    </script>
+</head>
+
+<body>
+    <div class="demo">
+        <button id="ev11-add" onclick="onAddItem()">Add item</button>
+        <ul id="ev11-list" style="margin:8px 0;padding-left:20px">
+        </ul>
+        <div class="output" id="ev11-out">Click an item</div>
+    </div>
+</body>
+
+</html>

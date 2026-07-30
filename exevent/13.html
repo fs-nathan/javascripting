@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        #parent {
+            background-color: #dbeafe;
+            color: #1e3a8a;
+            padding: 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #child {
+            background-color: #fef08a;
+            color: #713f12;
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .checkbox-group {
+            margin-top: 15px;
+        }
+        #result-box {
+            margin-top: 15px;
+            background-color: #f1f5f9;
+            color: #0f172a;
+            padding: 12px;
+            border-radius: 6px;
+            min-height: 20px;
+            font-family: monospace;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="parent">Parent (click me)
+        <div id="child">Child — stopPropagation</div>
+    </div>
+
+    <div class="checkbox-group">
+        <input type="checkbox" id="stop" checked>
+        <label for="stop">stopPropagation on child</label>
+    </div>
+    <div id="result-box"></div>
+</div>
+
+<script>
+    const parent = document.getElementById('parent');
+    const child = document.getElementById('child');
+    const stop = document.getElementById('stop');
+    const resultBox = document.getElementById('result-box');
+    let clickedLogs = [];
+
+    function log(text) {
+        clickedLogs.push(text);
+        resultBox.textContent = clickedLogs.join(' -> ');
+    }
+
+    child.addEventListener('click', (e) => {
+        if (stop.checked) {
+            e.stopPropagation(); 
+        }
+        log('child');
+    });
+
+    parent.addEventListener('click', () => {
+        log('parent');
+    });
+</script>
+
+</body>
+</html>
