@@ -30,6 +30,23 @@ addBtn.addEventListener("click", function () {
 
 // ham hien thi
 
+function onFocusOut(e) {
+    // console.log(e.target.textContent)
+}
+
+function onKeyDown(e, index) {
+    if (e.key == 'Enter') {
+        e.preventDefault();
+        const value = e.target.textContent;
+
+        e.target.blur();
+
+        todos[index] = value;
+        saveTodo();
+    }
+}
+
+
 function renderTodo() {
 
     todoList.innerHTML = "";
@@ -40,9 +57,9 @@ function renderTodo() {
         // cho nay them check box voi icon xoa sau tiep nua la them chinh sua
         li.innerHTML = `
             <input type = "checkbox">
-            <span>${todo}</span>
-            <button class = "edit-btn">Sua</button>
-            <button class = "delete-btn">🗑</button>
+            <span class="item-name" onfocusout="onFocusOut(event)" onkeydown="onKeyDown(event, ${index})">${todo}</span>
+            <button class="edit-btn">Sua</button>
+            <button class="delete-btn">🗑</button>
         `;
         // lay luon phan tu xoa, check box o day
         const checkbox = li.querySelector("input")
@@ -70,14 +87,7 @@ function renderTodo() {
         })
         // bat su kien nut sua
         editBtn.addEventListener('click', function(){
-            if(editBtn.textContent === "sua"){
-                const editInput = document.createElement("input")
-                editInput.value = todo;
-                span.replaceWith(editInput);
-                editBtn.textContent = "luu"
-            }
-            
-
+            span.setAttribute('contenteditable', "true")
         })
         todoList.appendChild(li);
 
