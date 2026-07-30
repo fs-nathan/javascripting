@@ -97,6 +97,42 @@ li:nth-child(2n) {
     background-color: rgb(217, 237, 237);
 }
 
+.item-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+    margin-left: 16px;
+}
+
+.actions .checkbox {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+    accent-color: rgb(247, 121, 125);
+}
+
+.actions .fa-trash {
+    color: rgb(120, 120, 120);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.actions .fa-trash:hover {
+    color: rgb(247, 121, 125);
+    transform: scale(1.1);
+}
+
 .strike-through {
 	text-decoration: line-through;
 }
