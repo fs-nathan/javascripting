@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript Quiz — Level Khó</title>
+  <style>
+    :root {
+      --bg: #f7f5f1;
+      --surface: #ffffff;
+      --ink: #1a1f2e;
+      --muted: #5c6578;
+      --accent: #0d6e6e;
+      --accent-hover: #095858;
+      --border: #d8d4cb;
+      --ok: #1b7a3d;
+      --ok-bg: #e8f6ee;
+      --bad: #b42318;
+      --bad-bg: #fef3f2;
+      --code-bg: #1e2433;
+      --code-fg: #e8ecf4;
+      --shadow: 0 1px 3px rgba(26, 31, 46, 0.08);
+      --radius: 10px;
+      --font: "Segoe UI", system-ui, sans-serif;
+      --mono: "SF Mono", "Fira Code", "Consolas", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse at top left, #e4f0ef 0%, transparent 45%),
+        radial-gradient(ellipse at bottom right, #efe8dc 0%, transparent 40%),
+        var(--bg);
+      line-height: 1.55;
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem 4rem;
+    }
+
+    header {
+      margin-bottom: 1.5rem;
+    }
+
+    header h1 {
+      margin: 0 0 0.35rem;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      letter-spacing: -0.02em;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1rem;
+      margin: 0 -0.25rem 1.5rem;
+      background: rgba(247, 245, 241, 0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .progress {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .progress span { color: var(--accent); }
+
+    .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      padding: 0.55rem 1.1rem;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    button:hover:not(:disabled) { background: var(--accent-hover); }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--border);
+    }
+
+    button.secondary:hover:not(:disabled) {
+      background: #efece4;
+    }
+
+    #result {
+      display: none;
+      padding: 1.25rem 1.35rem;
+      margin-bottom: 1.5rem;
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 2px solid var(--accent);
+      box-shadow: var(--shadow);
+    }
+
+    #result.visible { display: block; }
+
+    #result h2 {
+      margin: 0 0 0.5rem;
+      font-size: 1.25rem;
+    }
+
+    #result .score-line {
+      font-size: 1.1rem;
+      margin: 0.25rem 0;
+    }
+
+    #result .hint {
+      margin: 0.75rem 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .question {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.15rem 1.25rem 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+      scroll-margin-top: 5.5rem;
+    }
+
+    .question.correct {
+      border-color: var(--ok);
+      background: var(--ok-bg);
+    }
+
+    .question.incorrect {
+      border-color: var(--bad);
+      background: var(--bad-bg);
+    }
+
+    .q-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 0.55rem;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      background: #e6efef;
+      color: var(--accent);
+    }
+
+    .q-num {
+      font-weight: 700;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .q-text {
+      margin: 0 0 0.75rem;
+      font-size: 1.02rem;
+      font-weight: 600;
+    }
+
+    pre.code {
+      margin: 0 0 0.9rem;
+      padding: 0.85rem 1rem;
+      overflow-x: auto;
+      background: var(--code-bg);
+      color: var(--code-fg);
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    .choices {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .choices label {
+      display: flex;
+      gap: 0.65rem;
+      align-items: flex-start;
+      padding: 0.55rem 0.7rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      background: #fafaf8;
+    }
+
+    .choices label:hover {
+      border-color: var(--accent);
+      background: #f0f7f7;
+    }
+
+    .question.submitted .choices label {
+      cursor: default;
+    }
+
+    .choices input {
+      margin-top: 0.2rem;
+      flex-shrink: 0;
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 0.9rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed var(--border);
+      font-size: 0.92rem;
+    }
+
+    .question.submitted .feedback { display: block; }
+
+    .feedback .verdict {
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .feedback .verdict.ok { color: var(--ok); }
+    .feedback .verdict.bad { color: var(--bad); }
+
+    .feedback .answer { margin: 0.25rem 0; }
+    .feedback .explain { margin: 0.35rem 0 0; color: var(--muted); }
+
+    .msg {
+      color: var(--bad);
+      font-size: 0.9rem;
+      font-weight: 600;
+      min-height: 1.2em;
+    }
+
+    footer.nav {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    footer.nav a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+      margin-right: 1rem;
+    }
+
+    footer.nav a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>JavaScript Quiz — Level Khó</h1>
+      <p>String, Array, Vòng lặp, DOM, Event Handling · 50 câu · 1 đáp án đúng</p>
+    </header>
+
+    <div class="toolbar">
+      <div class="progress">Đã chọn: <span id="answeredCount">0</span> / 50</div>
+      <div class="actions">
+        <button type="button" class="secondary" id="scrollMissingBtn">Tới câu trống</button>
+        <button type="button" id="submitBtn" disabled>Nộp bài</button>
+      </div>
+    </div>
+    <p class="msg" id="statusMsg" role="status"></p>
+
+    <div id="result" aria-live="polite">
+      <h2>Kết quả</h2>
+      <p class="score-line" id="scoreLine"></p>
+      <p class="hint">Xem từng câu bên dưới: đáp án đúng và giải thích ngắn.</p>
+    </div>
+
+    <form id="quizForm"></form>
+
+    <footer class="nav">
+      <a href="easy.html">Dễ</a>
+      <a href="medium.html">Vừa</a>
+      <a href="hard.html">Khó</a>
+    </footer>
+  </div>
+
+  <script>
+    const TOPIC_LABELS = {"string":"String","array":"Array","loop":"Vòng lặp","dom":"DOM","event":"Event"};
+    const EXPECTED_TOPICS = {"string":8,"array":10,"loop":8,"dom":12,"event":12};
+    const questions = [{"id":1,"topic":"string","question":"Kết quả của đoạn code sau là gì?","code":"'a-b-c'.split('-').map((s) => s.toUpperCase()).join('')","choices":["ABC","a-b-c","A-B-C","[\"A\",\"B\",\"C\"]"],"correctIndex":0,"explanation":"split tách chuỗi, map viết hoa từng phần, join nối lại thành \"ABC\"."},{"id":2,"topic":"string","question":"Kết quả của đoạn code sau là gì?","code":"''.split('')","choices":["[]","['']","['', '']","\"\""],"correctIndex":0,"explanation":"split(\"\") trên chuỗi rỗng trả về mảng rỗng [], không phải [\"\"]."},{"id":3,"topic":"string","question":"Kết quả của đoạn code sau là gì?","code":"'hello'.slice(-3).split('').reverse().join('')","choices":["oll","leh","llo","olleh"],"correctIndex":0,"explanation":"slice(-3) lấy \"llo\", reverse đảo thành \"oll\"."},{"id":4,"topic":"string","question":"Kết quả của đoạn code sau là gì?","code":"'a1b2c3'.replace(/\\d/g, '-')","choices":["a-b-c-","a-b-c","a1b2c3","a-b--c-"],"correctIndex":0,"explanation":"Regex /\\d/g thay mọi chữ số bằng \"-\", kể cả số cuối."},{"id":5,"topic":"string","question":"Kết quả của đoạn code sau là gì?","code":"'42'.padStart(5, '0').slice(1)","choices":["0042","042","42","00042"],"correctIndex":0,"explanation":"padStart(5,\"0\") → \"00042\", slice(1) bỏ ký tự đầu → \"0042\"."},{"id":6,"topic":"string","question":"Kết quả của đoạn code sau là gì?","code":"'𝄞'.length","choices":["2","1","4","0"],"correctIndex":0,"explanation":"Ký tự ngoài BMP dùng surrogate pair nên .length trả về 2, không phải 1."},{"id":7,"topic":"string","question":"Kết quả của đoạn code sau là gì?","code":"'  a  b  '.trim().split(/\\s+/)","choices":["[\"a\", \"b\"]","[\"\", \"a\", \"b\", \"\"]","[\"a\", \"b\", \"\"]","[\"  a  b  \"]"],"correctIndex":0,"explanation":"trim() bỏ khoảng trắng hai đầu, split(/\\s+/) tách theo khoảng trắng liên tiếp."},{"id":8,"topic":"string","question":"Kết quả của đoạn code sau là gì?","code":"'javascript'.slice(4, 1)","choices":["\"\"","'script'","'java'","'ript'"],"correctIndex":0,"explanation":"slice đổi chỗ start/end khi start > end nên trả về chuỗi rỗng."},{"id":9,"topic":"array","question":"Kết quả của đoạn code sau là gì?","code":"[1, 2, 3, 4].reduce((acc, n) => acc + n, 0)","choices":["10","4","[1, 2, 3, 4]","0"],"correctIndex":0,"explanation":"reduce cộng dồn 1+2+3+4 với giá trị khởi tạo 0 → 10."},{"id":10,"topic":"array","question":"Kết quả của đoạn code sau là gì?","code":"[1, 2, 3, 4, 5].filter((n) => n % 2).map((n) => n * 2)","choices":["[2, 6, 10]","[1, 3, 5]","[2, 4, 6, 8, 10]","[1, 2, 3, 4, 5]"],"correctIndex":0,"explanation":"filter giữ số lẻ (1,3,5), map nhân đôi → [2, 6, 10]."},{"id":11,"topic":"array","question":"Kết quả của đoạn code sau là gì?","code":"[10, 2, 1].sort()","choices":["[1, 10, 2]","[1, 2, 10]","[10, 2, 1]","[2, 1, 10]"],"correctIndex":0,"explanation":"sort() không có compare chuyển phần tử thành chuỗi: \"1\" < \"10\" < \"2\"."},{"id":12,"topic":"array","question":"Kết quả của đoạn code sau là gì?","code":"[10, 2, 1].sort((a, b) => a - b)","choices":["[1, 2, 10]","[1, 10, 2]","[10, 2, 1]","[2, 1, 10]"],"correctIndex":0,"explanation":"Compare (a,b) => a-b sắp xếp số tăng dần: 1, 2, 10."},{"id":13,"topic":"array","question":"Kết quả của đoạn code sau là gì?","code":"const a = [1, [2]];\nconst b = [...a];\nb[1][0] = 99;\na[1][0];","choices":["99","2","undefined","1"],"correctIndex":0,"explanation":"Spread chỉ shallow copy: mảng con vẫn cùng tham chiếu nên a[1][0] = 99."},{"id":14,"topic":"array","question":"Kết quả của đoạn code sau là gì?","code":"const arr = [1, 2, 3, 4];\narr.splice(1, 2, \"x\");\narr;","choices":["[1, \"x\", 4]","[1, \"x\", 3, 4]","[2, 3]","[\"x\", 4]"],"correctIndex":0,"explanation":"splice(1,2,\"x\") xóa 2 phần tử từ index 1 và chèn \"x\" → [1,\"x\",4]."},{"id":15,"topic":"array","question":"Kết quả của đoạn code sau là gì?","code":"[1, 2].flatMap((n) => [n, n * 2])","choices":["[1, 2, 2, 4]","[[1, 2], [2, 4]]","[1, 2, 4]","[1, 4, 2, 8]"],"correctIndex":0,"explanation":"flatMap map rồi làm phẳng 1 cấp: mỗi n tạo [n, n*2] → [1,2,2,4]."},{"id":16,"topic":"array","question":"Gọi reduce trên mảng rỗng không có giá trị khởi tạo sẽ thế nào?","code":"[].reduce((acc, n) => acc + n)","choices":["TypeError","0","undefined","[]"],"correctIndex":0,"explanation":"reduce trên [] không initial value ném TypeError vì không có phần tử đầu."},{"id":17,"topic":"array","question":"Kết quả của đoạn code sau là gì?","code":"const x = [1];\nconst y = x.concat([2]);\nx.push(3);\ny;","choices":["[1, 2]","[1, 2, 3]","[1, 3]","[3, 1, 2]"],"correctIndex":0,"explanation":"concat tạo mảng mới [1,2]; push(3) sau đó chỉ ảnh hưởng x, không ảnh hưởng y."},{"id":18,"topic":"array","question":"Kết quả của đoạn code sau là gì?","code":"[3, 1, 4, 1, 5].reduce((acc, n) => (acc[n] = (acc[n] || 0) + 1, acc), {})","choices":["{1: 2, 3: 1, 4: 1, 5: 1}","[3, 1, 4, 1, 5]","5","{1:2}"],"correctIndex":0,"explanation":"Reduce đếm tần suất: 1 xuất hiện 2 lần, 3/4/5 mỗi số 1 lần."},{"id":19,"topic":"loop","question":"Kết quả của đoạn code sau là gì?","code":"let sum = 0;\nfor (let i = 1; i < 5; i++) {\n  sum += i;\n}\nsum;","choices":["10","15","4","9"],"correctIndex":0,"explanation":"i chạy 1→4 (i < 5), tổng 1+2+3+4 = 10."},{"id":20,"topic":"loop","question":"Kết quả của đoạn code sau là gì?","code":"const arr = [1, 2, 3];\nlet i = 0;\nwhile (i < arr.length) {\n  if (arr[i] % 2 === 0) arr.splice(i, 1);\n  else i++;\n}\narr;","choices":["[1, 3]","[1, 2, 3]","[3]","[]"],"correctIndex":0,"explanation":"Xóa số chẵn không tăng i: bỏ 2, còn [1,3]."},{"id":21,"topic":"loop","question":"Kết quả của đoạn code sau là gì?","code":"let count = 0;\nouter: for (let i = 0; i < 3; i++) {\n  for (let j = 0; j < 3; j++) {\n    count++;\n    if (j === 1) break outer;\n  }\n}\ncount;","choices":["2","3","6","9"],"correctIndex":0,"explanation":"i=0: j=0 count=1, j=1 count=2 rồi break outer thoát cả hai vòng."},{"id":22,"topic":"loop","question":"Kết quả của đoạn code sau là gì?","code":"let s = '';\nfor (let i = 0; i < 5; i++) {\n  if (i === 2) continue;\n  s += i;\n}\ns;","choices":["\"0134\"","\"01234\"","\"134\"","\"024\""],"correctIndex":0,"explanation":"continue bỏ qua i=2, nối các i còn lại: \"0\"+\"1\"+\"3\"+\"4\"."},{"id":23,"topic":"loop","question":"Kết quả của đoạn code sau là gì?","code":"let n = 0;\ndo {\n  n++;\n} while (n < 0);\nn;","choices":["1","0","undefined","TypeError"],"correctIndex":0,"explanation":"do...while luôn chạy thân ít nhất một lần trước khi kiểm tra điều kiện."},{"id":24,"topic":"loop","question":"Kết quả của đoạn code sau là gì?","code":"let total = 0;\nfor (const n of [1, 2, 3]) {\n  total += n;\n  if (total >= 3) break;\n}\ntotal;","choices":["3","6","1","2"],"correctIndex":0,"explanation":"1+2=3 đạt điều kiện >=3, break ngay, không cộng thêm 3."},{"id":25,"topic":"loop","question":"Kết quả của đoạn code sau là gì?","code":"let result = [];\nfor (let i = 0; i < 3; i++) {\n  for (let j = 0; j < 3; j++) {\n    if (i === j) result.push(i * j);\n  }\n}\nresult;","choices":["[0, 1, 4]","[0, 1, 2]","[1, 4, 9]","[]"],"correctIndex":0,"explanation":"Chỉ khi i===j: (0,0)→0, (1,1)→1, (2,2)→4."},{"id":26,"topic":"loop","question":"Kết quả của đoạn code sau là gì?","code":"const nums = [2, 4, 6];\nlet acc = 1;\nfor (let i = 0; i < nums.length; i++) {\n  acc *= nums[i];\n  if (acc > 6) break;\n}\nacc;","choices":["8","48","2","6"],"correctIndex":0,"explanation":"i=0: acc=2; i=1: acc=8 > 6 → break ngay, không nhân thêm 6."},{"id":27,"topic":"dom","question":"element.closest(\".card\") trả về gì khi element nằm trong .card?","code":"<div class=\"card\"><button class=\"btn\">X</button></div>\n// gọi btn.closest(\".card\")","choices":["Phần tử div.card (ancestor gần nhất khớp selector)","Phần tử button.btn","null","NodeList tất cả .card"],"correctIndex":0,"explanation":"closest đi lên cây DOM, trả về ancestor đầu tiên (hoặc chính nó) khớp selector."},{"id":28,"topic":"dom","question":"Khác biệt chính giữa textContent và innerHTML khi gán chuỗi \"<b>hi</b>\"?","code":"el.textContent = \"<b>hi</b>\";\n// vs\nel.innerHTML = \"<b>hi</b>\";","choices":["textContent hiển thị literal \"<b>hi</b>\"; innerHTML render thẻ <b>","Cả hai đều render thẻ <b>","innerHTML escape HTML; textContent không","textContent chỉ dùng cho input"],"correctIndex":0,"explanation":"textContent coi mọi thứ là text thuần; innerHTML parse và chèn markup."},{"id":29,"topic":"dom","question":"querySelectorAll(\".item\") trả về NodeList kiểu gì?","code":"const list = document.querySelectorAll(\".item\");\n// thêm .item mới vào DOM sau đó","choices":["Static NodeList — không tự cập nhật khi DOM đổi","Live NodeList — tự cập nhật khi DOM đổi","HTMLCollection live","Mảng JavaScript thuần"],"correctIndex":0,"explanation":"querySelectorAll trả về static snapshot; getElementsByClassName mới là live."},{"id":30,"topic":"dom","question":"element.classList.toggle(\"active\", false) làm gì?","code":"<div class=\"box active\"></div>\nbox.classList.toggle(\"active\", false);","choices":["Luôn xóa class \"active\" (force off)","Luôn thêm class \"active\" (force on)","Đảo trạng thái bất kể tham số thứ hai","Trả về undefined"],"correctIndex":0,"explanation":"Tham số thứ hai force: true = thêm, false = xóa class, bỏ qua toggle ngẫu nhiên."},{"id":31,"topic":"dom","question":"data-user-id=\"42\" trên phần tử truy cập qua dataset như thế nào?","code":"<div data-user-id=\"42\"></div>","choices":["element.dataset.userId === \"42\"","element.dataset.user-id === \"42\"","element.data.userId === \"42\"","element.getData(\"userId\") === \"42\""],"correctIndex":0,"explanation":"data-* chuyển kebab-case sang camelCase: data-user-id → dataset.userId."},{"id":32,"topic":"dom","question":"parent.children khác parent.childNodes ở điểm nào?","code":"<div>Text <span>x</span></div>","choices":["children chỉ chứa element nodes; childNodes gồm text/comment","childNodes chỉ chứa element nodes","children bao gồm text nodes","Hai thuộc tính luôn giống hệt nhau"],"correctIndex":0,"explanation":"childNodes liệt kê mọi loại node; children chỉ HTML element con trực tiếp."},{"id":33,"topic":"dom","question":"insertAdjacentHTML(\"afterbegin\", \"<li>x</li>\") chèn vào đâu?","code":"<ul id=\"list\"><li>a</li></ul>\nlist.insertAdjacentHTML(\"afterbegin\", \"<li>x</li>\");","choices":["Bên trong ul, trước phần tử con đầu tiên","Sau phần tử ul (ngoài ul)","Trước thẻ ul (sibling trước)","Thay thế toàn bộ nội dung ul"],"correctIndex":0,"explanation":"afterbegin = bên trong element, ngay trước node con đầu tiên."},{"id":34,"topic":"dom","question":"element.matches(\".btn.primary\") kiểm tra điều gì?","code":"btn.matches(\".btn.primary\")","choices":["Element có đủ cả class btn VÀ primary","Element có class btn HOẶC primary","Element là con của .btn.primary","Element chứa phần tử .btn.primary"],"correctIndex":0,"explanation":"Selector \".btn.primary\" (không có khoảng trắng) nghĩa là cùng element có cả hai class."},{"id":35,"topic":"dom","question":"Khi append DocumentFragment vào DOM, điều gì xảy ra với các node con?","code":"const frag = document.createDocumentFragment();\nfrag.appendChild(li);\nul.appendChild(frag);","choices":["Các node con chuyển vào ul; fragment trở nên rỗng","Fragment được chèn nguyên khối như một wrapper","Node con bị clone, fragment giữ bản gốc","Chỉ node đầu tiên được chèn"],"correctIndex":0,"explanation":"appendChild fragment di chuyển children vào đích, fragment không còn con."},{"id":36,"topic":"dom","question":"getAttribute(\"href\") khác element.href trên thẻ <a> như thế nào?","code":"<a id=\"link\" href=\"/page\">Go</a>","choices":["getAttribute trả chuỗi gốc; .href trả URL đầy đủ đã resolve","Cả hai luôn trả về cùng một giá trị",".href chỉ trả chuỗi gốc","getAttribute resolve URL đầy đủ"],"correctIndex":0,"explanation":"Property .href chuẩn hóa thành absolute URL; getAttribute giữ giá trị attribute."},{"id":37,"topic":"dom","question":"Thứ tự các bước khi gọi parent.appendChild(child) lần đầu?","code":"parent.appendChild(child);","choices":["Gỡ child khỏi vị trí cũ (nếu có) rồi thêm vào cuối parent","Clone child, giữ bản gốc tại chỗ","Chỉ hoạt động nếu child chưa có parent","Thêm vào đầu parent, không phải cuối"],"correctIndex":0,"explanation":"appendChild di chuyển node: tự detach khỏi parent cũ rồi gắn vào parent mới."},{"id":38,"topic":"dom","question":"element.remove() so với parent.removeChild(element)?","code":"element.remove();\n// vs\nparent.removeChild(element);","choices":["remove() gọi trên chính element; removeChild cần tham chiếu parent","removeChild hoạt động không cần parent","remove() chỉ ẩn element (display:none)","Hai API không tương đương về kết quả DOM"],"correctIndex":0,"explanation":"Cả hai gỡ node khỏi cây DOM; remove() tiện hơn vì không cần biết parent."},{"id":39,"topic":"event","question":"Thứ tự propagation khi click phần tử con (capture + bubble listeners trên ancestor)?","code":"// grand (capture) → parent (capture) → child (target)\n// → parent (bubble) → grand (bubble)","choices":["Capture ngoài→trong, target, rồi bubble trong→ngoài","Bubble trước, capture sau","Chỉ chạy listeners trên target","Ngẫu nhiên theo thứ tự đăng ký, không phân phase"],"correctIndex":0,"explanation":"Chuẩn DOM: capture phase → target phase → bubble phase."},{"id":40,"topic":"event","question":"event.stopPropagation() ngăn điều gì?","code":"child.addEventListener(\"click\", (e) => {\n  e.stopPropagation();\n});","choices":["Event không lan tiếp tới listener trên ancestor (phase còn lại)","Ngăn hành vi mặc định của trình duyệt","Xóa tất cả listener trên cùng element","Hủy event trên mọi tab"],"correctIndex":0,"explanation":"stopPropagation chặn lan truyền; preventDefault mới chặn hành vi mặc định."},{"id":41,"topic":"event","question":"form.addEventListener(\"submit\", fn) — preventDefault trong fn làm gì?","code":"form.addEventListener(\"submit\", (e) => {\n  e.preventDefault();\n});","choices":["Chặn trình duyệt gửi form / reload trang","Chặn event bubble lên document","Reset form về trạng thái ban đầu","Vô hiệu hóa validation HTML5"],"correctIndex":0,"explanation":"preventDefault trên submit ngăn navigation/reload mặc định, cho phép xử lý bằng JS."},{"id":42,"topic":"event","question":"Event delegation: listener trên ul, click li — event.target là gì?","code":"ul.addEventListener(\"click\", (e) => {\n  console.log(e.target);\n});\n// user click <li>","choices":["Phần tử li được click (target sâu nhất)","Luôn là ul (nơi gắn listener)","Phần tử body","null"],"correctIndex":0,"explanation":"target là phần tử gốc phát sinh event; currentTarget mới là ul."},{"id":43,"topic":"event","question":"addEventListener(\"click\", fn, true) đăng ký listener ở phase nào?","code":"el.addEventListener(\"click\", handler, true);","choices":["Capture phase","Bubble phase (mặc định)","Target phase only","Cả capture và bubble cùng lúc"],"correctIndex":0,"explanation":"Tham số thứ ba true = capture; false/omit = bubble."},{"id":44,"topic":"event","question":"{ once: true } trong addEventListener có tác dụng gì?","code":"btn.addEventListener(\"click\", handler, { once: true });","choices":["Tự gỡ listener sau lần gọi đầu tiên","Chỉ lắng nghe capture phase","Chặn mọi click sau lần đầu trên toàn trang","Gọi handler tối đa một lần mỗi giây"],"correctIndex":0,"explanation":"once: true tự remove listener sau khi chạy lần đầu."},{"id":45,"topic":"event","question":"Hai listener bubble cùng element, không stopPropagation — thứ tự gọi?","code":"el.addEventListener(\"click\", () => console.log(1));\nel.addEventListener(\"click\", () => console.log(2));","choices":["Theo thứ tự đăng ký: 1 rồi 2","Theo thứ tự ngược: 2 rồi 1","Chỉ listener cuối được gọi","Ngẫu nhiên"],"correctIndex":0,"explanation":"Cùng element, cùng phase: listeners chạy FIFO theo thứ tại đăng ký."},{"id":46,"topic":"event","question":"Trong handler gắn trên button, event.currentTarget là gì?","code":"button.addEventListener(\"click\", (e) => {\n  // e.currentTarget vs e.target\n});","choices":["Luôn là button (element gắn listener)","Luôn là phần tử con được click","Luôn là document","null khi dùng delegation"],"correctIndex":0,"explanation":"currentTarget là element đang xử lý listener; target có thể là con bên trong."},{"id":47,"topic":"event","question":"stopImmediatePropagation() khác stopPropagation() thế nào?","code":"el.addEventListener(\"click\", (e) => {\n  e.stopImmediatePropagation();\n});","choices":["Chặn cả listener khác trên CÙNG element trong cùng phase","Chỉ chặn bubble, không ảnh hưởng listener cùng element","Chỉ hoạt động trên form submit","Tương đương preventDefault"],"correctIndex":0,"explanation":"stopImmediatePropagation ngăn listener còn lại trên cùng node; stopPropagation chỉ chặn lan sang node khác."},{"id":48,"topic":"event","question":"Click vào <span> bên trong <button disabled> — điều gì xảy ra?","code":"<button disabled><span>Go</span></button>","choices":["Click không kích hoạt handler trên button (disabled chặn interaction)","Click vẫn bubble từ span lên button bình thường","Chỉ capture phase chạy","Browser tự enable button"],"correctIndex":0,"explanation":"Phần tử disabled không nhận pointer events; click con bên trong cũng không fire trên button."},{"id":49,"topic":"event","question":"Enter trong input text bên trong <form> (không có type=submit) thường gây ra?","code":"<form><input type=\"text\"></form>","choices":["Submit form (event submit trên form)","Không có gì xảy ra","Chỉ fire keydown, không submit","Reset form"],"correctIndex":0,"explanation":"Enter trong text input của form kích hoạt implicit submit → event submit trên form."},{"id":50,"topic":"event","question":"Delegation: ul listener dùng e.target.closest(\"li\") khi click vào <span> trong <li>?","code":"ul.addEventListener(\"click\", (e) => {\n  const li = e.target.closest(\"li\");\n});","choices":["closest trả về li ancestor chứa span","closest trả về span vì đó là target","closest trả về null","closest trả về ul"],"correctIndex":0,"explanation":"closest đi lên từ span, tìm thấy li cha phù hợp — pattern delegation chuẩn."}];
+
+    const form = document.getElementById('quizForm');
+    const answeredCountEl = document.getElementById('answeredCount');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusMsg = document.getElementById('statusMsg');
+    const resultBox = document.getElementById('result');
+    const scoreLine = document.getElementById('scoreLine');
+    const scrollMissingBtn = document.getElementById('scrollMissingBtn');
+
+    let submitted = false;
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function getAnswers() {
+      const answers = {};
+      for (const q of questions) {
+        const checked = form.querySelector('input[name="q' + q.id + '"]:checked');
+        if (checked) answers[q.id] = Number(checked.value);
+      }
+      return answers;
+    }
+
+    function answeredCount() {
+      return Object.keys(getAnswers()).length;
+    }
+
+    function updateProgress() {
+      const n = answeredCount();
+      answeredCountEl.textContent = String(n);
+      submitBtn.disabled = submitted || n < questions.length;
+      if (!submitted && n === questions.length) {
+        statusMsg.textContent = 'Đã trả lời hết — có thể nộp bài.';
+        statusMsg.style.color = 'var(--ok)';
+      } else if (!submitted) {
+        statusMsg.textContent = '';
+        statusMsg.style.color = '';
+      }
+    }
+
+    function firstMissing() {
+      const answers = getAnswers();
+      return questions.find(function (q) { return answers[q.id] === undefined; });
+    }
+
+    function render() {
+      const letters = ['A', 'B', 'C', 'D'];
+      form.innerHTML = questions.map(function (q) {
+        const codeBlock = q.code
+          ? '<pre class="code"><code>' + escapeHtml(q.code) + '</code></pre>'
+          : '';
+        const choices = q.choices.map(function (choice, i) {
+          return (
+            '<li><label>' +
+            '<input type="radio" name="q' + q.id + '" value="' + i + '">' +
+            '<span><strong>' + letters[i] + '.</strong> ' + escapeHtml(choice) + '</span>' +
+            '</label></li>'
+          );
+        }).join('');
+        return (
+          '<article class="question" id="question-' + q.id + '" data-id="' + q.id + '">' +
+          '<div class="q-meta">' +
+          '<span class="q-num">Câu ' + q.id + '</span>' +
+          '<span class="badge">' + escapeHtml(TOPIC_LABELS[q.topic] || q.topic) + '</span>' +
+          '</div>' +
+          '<p class="q-text">' + escapeHtml(q.question) + '</p>' +
+          codeBlock +
+          '<ul class="choices">' + choices + '</ul>' +
+          '<div class="feedback" id="feedback-' + q.id + '"></div>' +
+          '</article>'
+        );
+      }).join('');
+    }
+
+    function submitQuiz() {
+      if (submitted) return;
+      const n = answeredCount();
+      if (n < questions.length) {
+        const missing = questions.length - n;
+        statusMsg.textContent = 'Còn ' + missing + ' câu chưa trả lời. Hãy chọn hết rồi nộp.';
+        statusMsg.style.color = 'var(--bad)';
+        const first = firstMissing();
+        if (first) {
+          const el = document.getElementById('question-' + first.id);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        return;
+      }
+
+      submitted = true;
+      const answers = getAnswers();
+      let correct = 0;
+      const letters = ['A', 'B', 'C', 'D'];
+
+      for (const q of questions) {
+        const article = document.getElementById('question-' + q.id);
+        const feedback = document.getElementById('feedback-' + q.id);
+        const selected = answers[q.id];
+        const isCorrect = selected === q.correctIndex;
+        if (isCorrect) correct += 1;
+
+        article.classList.add('submitted', isCorrect ? 'correct' : 'incorrect');
+        article.querySelectorAll('input').forEach(function (input) {
+          input.disabled = true;
+        });
+
+        const correctLabel = letters[q.correctIndex] + '. ' + q.choices[q.correctIndex];
+        if (isCorrect) {
+          feedback.innerHTML =
+            '<div class="verdict ok">Đúng</div>' +
+            '<p class="explain">' + escapeHtml(q.explanation) + '</p>';
+        } else {
+          feedback.innerHTML =
+            '<div class="verdict bad">Sai</div>' +
+            '<p class="answer"><strong>Đáp án đúng:</strong> ' + escapeHtml(correctLabel) + '</p>' +
+            '<p class="explain">' + escapeHtml(q.explanation) + '</p>';
+        }
+      }
+
+      const pct = Math.round((correct / questions.length) * 100);
+      scoreLine.textContent = 'Đúng: ' + correct + '/' + questions.length + ' (' + pct + '%)';
+      resultBox.classList.add('visible');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Đã nộp';
+      statusMsg.textContent = '';
+      resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    form.addEventListener('change', updateProgress);
+    submitBtn.addEventListener('click', submitQuiz);
+    scrollMissingBtn.addEventListener('click', function () {
+      const first = firstMissing();
+      if (!first) {
+        statusMsg.textContent = 'Không còn câu trống.';
+        statusMsg.style.color = 'var(--ok)';
+        return;
+      }
+      const el = document.getElementById('question-' + first.id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    render();
+    updateProgress();
+
+    // Dev self-check (console only)
+    (function selfCheck() {
+      if (questions.length !== 50) console.error('Expected 50 questions, got', questions.length);
+      const counts = {};
+      questions.forEach(function (q) {
+        counts[q.topic] = (counts[q.topic] || 0) + 1;
+      });
+      Object.keys(EXPECTED_TOPICS).forEach(function (t) {
+        if (counts[t] !== EXPECTED_TOPICS[t]) {
+          console.error('Topic mismatch', t, counts[t], EXPECTED_TOPICS[t]);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

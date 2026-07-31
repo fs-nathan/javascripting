@@ -27,11 +27,15 @@
   "scripts": {
     "test": "standard && node tests/unit/run-function-tests.test.js && node scripts/verify-fifty-solutions.js && workshopper-adventure-test",
     "generate:fifty": "node scripts/generate-fifty-exercises.js",
-    "verify:fifty": "node scripts/verify-fifty-solutions.js"
+    "verify:fifty": "node scripts/verify-fifty-solutions.js",
+    "build:quiz": "node scripts/quiz/build-quiz.js",
+    "validate:quiz": "node scripts/validate-quiz.js"
   },
   "standard": {
     "ignore": [
-      "scripts/fifty-exercises-part*.js"
+      "scripts/fifty-exercises-part*.js",
+      "scripts/quiz/**",
+      "quiz/**"
     ]
   }
 }
