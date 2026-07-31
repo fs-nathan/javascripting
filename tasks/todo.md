@@ -16,4 +16,4 @@
 - [x] `node scripts/validate-quiz.js` pass cả 3 file
 
 ## Phase 3: Ship
-- [ ] Task 3.1: Commit + push lên `main`
+- [x] Task 3.1: Commit + push lên `main`
